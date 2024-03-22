@@ -8,8 +8,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import univ.inu.Capstone.common.dto.user.UserDto;
+import univ.inu.Capstone.common.utils.CustomUserDetails;
 import univ.inu.Capstone.common.utils.JwtUtil;
-import univ.inu.Capstone.login.LoginService;
+import univ.inu.Capstone.phone.login.LoginService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -59,12 +61,18 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // 1. 토큰에서 userSeq 꺼내기
-        Long userSeq = JwtUtil.getUserSeq(token, secretKey);
-        log.info("userSeq : {}", userSeq);
+        UserDto userDto = JwtUtil.getUserDto(token, secretKey);
+
+        CustomUserDetails customUserDetails = CustomUserDetails.builder()
+                .userSeq(userDto.getUserSeq())
+                .nickname(userDto.getNickname())
+                .email(userDto.getEmail())
+                .authorities(List.of(new SimpleGrantedAuthority("USER")))
+                .build();
 
         // 2. 권한 부여하기
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userSeq, null, List.of(new SimpleGrantedAuthority("USER")));
+                new UsernamePasswordAuthenticationToken(customUserDetails, null, List.of(new SimpleGrantedAuthority("USER")));
 
         // 3. Detail 넣어주기
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

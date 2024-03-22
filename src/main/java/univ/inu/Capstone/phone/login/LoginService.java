@@ -1,16 +1,16 @@
-package univ.inu.Capstone.login;
+package univ.inu.Capstone.phone.login;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import univ.inu.Capstone.common.dto.UserDto;
+import univ.inu.Capstone.common.dto.user.UserDto;
 import univ.inu.Capstone.common.entity.User;
 import univ.inu.Capstone.common.repository.UserRepository;
 import univ.inu.Capstone.common.utils.JwtUtil;
-import univ.inu.Capstone.login.dto.LoginDto;
-import univ.inu.Capstone.login.dto.TokenDto;
+import univ.inu.Capstone.phone.login.dto.LoginDto;
+import univ.inu.Capstone.phone.login.dto.TokenDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;

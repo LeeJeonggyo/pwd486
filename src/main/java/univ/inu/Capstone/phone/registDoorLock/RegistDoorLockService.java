@@ -1,4 +1,4 @@
-package univ.inu.Capstone.main;
+package univ.inu.Capstone.phone.registDoorLock;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MainService {
+public class RegistDoorLockService {
 
     private final UserRepository userRepository;
     public String mainTest(String kakaoId){

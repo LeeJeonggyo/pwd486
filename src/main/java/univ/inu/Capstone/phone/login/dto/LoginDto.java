@@ -1,4 +1,4 @@
-package univ.inu.Capstone.login.dto;
+package univ.inu.Capstone.phone.login.dto;
 
 import lombok.Getter;
 

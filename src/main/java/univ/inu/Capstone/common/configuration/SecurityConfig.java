@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import univ.inu.Capstone.login.LoginService;
+import univ.inu.Capstone.phone.login.LoginService;
 
 @Configuration
 @EnableWebSecurity

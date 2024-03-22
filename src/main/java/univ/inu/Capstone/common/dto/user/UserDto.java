@@ -1,4 +1,4 @@
-package univ.inu.Capstone.common.dto;
+package univ.inu.Capstone.common.dto.user;
 
 import lombok.Builder;
 import lombok.Getter;

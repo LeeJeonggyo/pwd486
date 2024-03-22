@@ -6,7 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import univ.inu.Capstone.common.dto.UserDto;
+import org.springframework.beans.factory.annotation.Value;
+import univ.inu.Capstone.common.dto.user.UserDto;
 ;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -65,16 +66,6 @@ public class JwtUtil {
                 .setSigningKey(getSiginingKey(secretKey)).build()
                 .parseClaimsJws(token);
         return claimsJws.getBody().getExpiration().before(new Date());
-    }
-
-    /* ===============================================================
-     * 토큰에서 userSeq 값 꺼내기
-     * =============================================================== */
-    public static Long getUserSeq(String token, String secretKey) {
-        Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(getSiginingKey(secretKey)).build()
-                .parseClaimsJws(token);
-        return claimsJws.getBody().get("userSeq", Long.class);
     }
 
     /* ===============================================================
