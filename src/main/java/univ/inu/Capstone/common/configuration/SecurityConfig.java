@@ -29,7 +29,9 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .antMatchers("/pw486/user/firstLogin", "/pw486/user/refreshLogin").permitAll()
+                .antMatchers("/pw486/user/firstLogin"
+                        , "/pw486/user/refreshLogin"
+                        , "/api/pw486/regist/machine").permitAll()
                 .antMatchers("/api/pw486/**").authenticated()
                 .and()
                 .sessionManagement()

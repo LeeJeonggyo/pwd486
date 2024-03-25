@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class User {
+public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userSeq;   // 구분자
@@ -23,22 +23,6 @@ public class User {
     private String email;       // 카카오 로그인 이메일
 
     private String refreshToken;       // refreshToken
-
-    private LocalDateTime inpDate; // 생성일
-    private LocalDateTime modDate; // 수정일
-
-    /* =======================================================
-     * 생성일, 수정일 셋팅
-     * ======================================================= */
-    @PrePersist
-    public void prePersist(){
-        this.inpDate = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void PreUpdate(){
-        this.modDate = LocalDateTime.now();
-    }
 
     /* =======================================================
      * update

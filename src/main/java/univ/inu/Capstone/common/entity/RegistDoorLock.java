@@ -1,0 +1,28 @@
+package univ.inu.Capstone.common.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Builder
+@Getter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegistDoorLock extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long rdlSeq;    // 구분자
+    private String rdlName; // 카드키 이름
+    private int rdlAuth;    // 권한 (1:OWNER / 2:MEMBER)
+    private int rdlApprove; // 승인여부 (0: 미승인 / 1: 승인) - OWNER 권한은 무조건 1
+
+    private Long userSeq;       // 사용자 구분자
+
+    @ManyToOne
+    @JoinColumn(name="doorLockSeq")
+    private DoorLock doorLock;   // 도어락 구분자
+}
