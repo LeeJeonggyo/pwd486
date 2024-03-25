@@ -20,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RegistDoorLockService {
 
+    private final UserRepository userRepository;
     private final DoorLockRepository doorLockRepository;
     private final RegistDoorLockRepository registDoorLockRepository;
 
@@ -61,23 +62,32 @@ public class RegistDoorLockService {
      * @return RegistDLResponseDto.RegistDL
      */
     public RegistDLResponseDto.RegistDL registDL(RegistDLRequestDto.RegistDL dto, Long userSeq){
-        // 1. 넘어온 도어락 구분자값으로 등록된 도어락 정보가 있는지 확인
+        // 1. 넘어온 userSeq 데이터가 있는지 확인
+        Optional<User> user = userRepository.findById(userSeq);
+        if (user.isEmpty()) throw new RuntimeException();
+
+        // 2. 넘어온 도어락 구분자값으로 등록된 도어락 정보가 있는지 확인
         Optional<DoorLock> doorLock = doorLockRepository.findById(dto.getDoorLockSeq());
         if (doorLock.isEmpty()) throw new RuntimeException();
 
-        // 2. 넘어온 도어락 구분자값으로 등록된 사용자가 있는지 확인
-        Optional<List<RegistDoorLock>> data = registDoorLockRepository.findByDoorLockSeq(dto.getDoorLockSeq());
+        // 3. 넘어온 도어락 구분자값으로 등록된 사용자가 있는지 확인
+        List<RegistDoorLock> data = registDoorLockRepository.findByDoorLock_DoorLockSeq(dto.getDoorLockSeq());
 
-        // 3. 사용자가 없을 경우, OWNER 권한 / 있을 경우, MEMBER 권한
+        // 4. 넘어온 도어락 구분자 및 사용자 구분자 코드로 등록된 데이터가 있는지 확인
+        if(data.isEmpty() &
+                registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, dto.getDoorLockSeq()).isPresent())
+            throw new RuntimeException();
+
+        // 5. 사용자가 없을 경우, OWNER 권한 / 있을 경우, MEMBER 권한
         RegistDoorLock registDoorLock = RegistDoorLock.builder()
-                .userSeq(userSeq)
+                .user(user.get())
+                .doorLock(doorLock.get())
                 .rdlName(dto.getRdlName())
                 .rdlAuth(data.isEmpty() ? 1 : 2)
                 .rdlApprove(data.isEmpty() ? 0 : 1)
-                .doorLock(doorLock.get())
                 .build();
 
-        // 4. 데이터 저장 & return
+        // 6. 데이터 저장 & return
         registDoorLockRepository.save(registDoorLock);
         return RegistDLResponseDto.RegistDL.builder()
                 .serialNo(registDoorLock.getDoorLock().getSerialNo())

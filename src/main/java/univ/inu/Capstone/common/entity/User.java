@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Entity
@@ -23,6 +24,9 @@ public class User extends BaseEntity{
     private String email;       // 카카오 로그인 이메일
 
     private String refreshToken;       // refreshToken
+
+    @OneToMany(mappedBy = "user")
+    private List<RegistDoorLock> registDoorLock;
 
     /* =======================================================
      * update

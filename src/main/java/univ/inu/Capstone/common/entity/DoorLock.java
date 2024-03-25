@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder
 @Getter
@@ -19,6 +20,6 @@ public class DoorLock extends BaseEntity {
     private String serialNo;    // 시리얼넘버
 
     @OneToMany(mappedBy = "doorLock")
-    private RegistDoorLock registDoorLock;
+    private List<RegistDoorLock> registDoorLock;
 }
 

@@ -20,7 +20,9 @@ public class RegistDoorLock extends BaseEntity {
     private int rdlAuth;    // 권한 (1:OWNER / 2:MEMBER)
     private int rdlApprove; // 승인여부 (0: 미승인 / 1: 승인) - OWNER 권한은 무조건 1
 
-    private Long userSeq;       // 사용자 구분자
+    @ManyToOne
+    @JoinColumn(name="userSeq")
+    private User user;       // 사용자 구분자
 
     @ManyToOne
     @JoinColumn(name="doorLockSeq")
