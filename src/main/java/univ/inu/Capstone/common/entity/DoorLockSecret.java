@@ -17,7 +17,7 @@ public class DoorLockSecret extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dlSecretSeq;               // 구분자
-    private String dlSecretNo = "0000";     // 비밀번호
+    private String dlSecretNo;     // 비밀번호
 
     @OneToOne
     @JoinColumn(name="doorLockSeq")

@@ -96,6 +96,7 @@ public class RegistDoorLockService {
         // 6. owner 권한으로 등록 한 경우, 비밀번호 로우 생성
         if(registDoorLock.getRdlAuth() == 1){
             DoorLockSecret doorLockSecret = DoorLockSecret.builder()
+                    .dlSecretNo("0000")
                     .user(user.get())
                     .doorLock(doorLock.get())
                     .build();
