@@ -21,5 +21,8 @@ public class DoorLock extends BaseEntity {
 
     @OneToMany(mappedBy = "doorLock")
     private List<RegistDoorLock> registDoorLock;
+
+    @OneToOne(mappedBy = "doorLock")
+    private DoorLockSecret doorLockSecret;
 }
 
