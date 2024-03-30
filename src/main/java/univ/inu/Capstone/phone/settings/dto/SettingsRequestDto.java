@@ -11,4 +11,9 @@ public class SettingsRequestDto {
         private String newSecretNo;     // 새 비밀번로
         private String checkSecretNo;   // 새 비밀번호 확인
     }
+
+    @Data
+    public static class viewLog {
+        private Long doorLockSeq;       // 도어락 구분자
+    }
 }

@@ -12,6 +12,8 @@ import univ.inu.Capstone.common.utils.CustomUserDetails;
 import univ.inu.Capstone.phone.settings.dto.SettingsRequestDto;
 import univ.inu.Capstone.phone.settings.dto.SettingsResponseDto;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +31,11 @@ public class SettingsController {
     public ResponseEntity<SettingsResponseDto.changePw> changePw(@RequestBody SettingsRequestDto.changePw dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.changePw(dto, userDetails.getUserSeq()));
+    }
+
+    @PostMapping("/view/log")
+    public ResponseEntity<List<SettingsResponseDto.viewLog>> viewLog(@RequestBody SettingsRequestDto.viewLog dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.viewLog(dto, userDetails.getUserSeq()));
     }
 }

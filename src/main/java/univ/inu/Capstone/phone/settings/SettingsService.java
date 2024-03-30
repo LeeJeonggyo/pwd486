@@ -3,14 +3,20 @@ package univ.inu.Capstone.phone.settings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import univ.inu.Capstone.common.entity.DoorLockSecret;
+import univ.inu.Capstone.common.entity.OpenLog;
 import univ.inu.Capstone.common.entity.RegistDoorLock;
 import univ.inu.Capstone.common.repository.DoorLockSecretRespository;
+import univ.inu.Capstone.common.repository.OpenLogRepository;
 import univ.inu.Capstone.common.repository.RegistDoorLockRepository;
 import univ.inu.Capstone.phone.settings.dto.SettingsRequestDto;
 import univ.inu.Capstone.phone.settings.dto.SettingsResponseDto;
 
 import javax.transaction.Transactional;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +24,7 @@ public class SettingsService {
 
     private final RegistDoorLockRepository registDoorLockRepository;
     private final DoorLockSecretRespository doorLockSecretRespository;
+    private final OpenLogRepository openLogRepository;
 
     /**
      * 도어락 비밀번호 변경
@@ -44,6 +51,27 @@ public class SettingsService {
         return SettingsResponseDto.changePw.builder()
                 .result("SUCCESS")
                 .build();
+    }
+
+    public List<SettingsResponseDto.viewLog> viewLog(SettingsRequestDto.viewLog dto, Long userSeq){
+        // 1. 요청자가 해당 도어락의 owner 권한을 가진사람이 맞는지 확인
+        Optional<RegistDoorLock> registDoorLock = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, dto.getDoorLockSeq());
+        if(registDoorLock.isEmpty() || registDoorLock.get().getRdlAuth() != 1) throw new RuntimeException("권한이 없습니다.");
+
+        // 2. 도어락 구분자를 사용해서 출입 로그 가져오기 & dto 변환
+        List<OpenLog> openLogList = openLogRepository.findByDoorLock_DoorLockSeq(dto.getDoorLockSeq());
+        List<SettingsResponseDto.viewLog> result = new ArrayList<>();
+        for (OpenLog entity : openLogList) {
+            SettingsResponseDto.viewLog data = SettingsResponseDto.viewLog.builder()
+                    .nickname(entity.getUser().getNickname())
+                    .inpDate(entity.getInpDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                    .inpTime(entity.getInpDate().format(DateTimeFormatter.ofPattern("HH시 mm분 ss.SSS초")))
+                    .build();
+            data.setOpenMethod(entity.getOpenMethod());
+            result.add(data);
+        }
+
+        return result;
     }
 
 }
