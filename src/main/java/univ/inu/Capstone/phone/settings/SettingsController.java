@@ -33,6 +33,12 @@ public class SettingsController {
         return ResponseEntity.ok().body(settingsService.changePw(dto, userDetails.getUserSeq()));
     }
 
+    /**
+     * 출입로그 조회
+     * @param dto SettingsRequestDto.viewLog
+     * @param authentication Authentication
+     * @return ResponseEntity<List<SettingsResponseDto.viewLog>>
+     */
     @PostMapping("/view/log")
     public ResponseEntity<List<SettingsResponseDto.viewLog>> viewLog(@RequestBody SettingsRequestDto.viewLog dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();

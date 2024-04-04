@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +52,11 @@ public class SettingsService {
                 .build();
     }
 
+    /**
+     * 출입로그 조회
+     * @param dto SettingsRequestDto.viewLog
+     * @return List<SettingsResponseDto.viewLog>
+     */
     public List<SettingsResponseDto.viewLog> viewLog(SettingsRequestDto.viewLog dto, Long userSeq){
         // 1. 요청자가 해당 도어락의 owner 권한을 가진사람이 맞는지 확인
         Optional<RegistDoorLock> registDoorLock = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, dto.getDoorLockSeq());
@@ -63,7 +67,7 @@ public class SettingsService {
         List<SettingsResponseDto.viewLog> result = new ArrayList<>();
         for (OpenLog entity : openLogList) {
             SettingsResponseDto.viewLog data = SettingsResponseDto.viewLog.builder()
-                    .nickname(entity.getUser().getNickname())
+                    .nickname(entity.getNickname())
                     .inpDate(entity.getInpDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                     .inpTime(entity.getInpDate().format(DateTimeFormatter.ofPattern("HH시 mm분 ss.SSS초")))
                     .build();

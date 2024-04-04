@@ -17,10 +17,7 @@ public class OpenLog extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long openLogSeq;    // 구분자
     private Long openMethod;    // 해제 방법 구분자(1: NFC / 2: 비밀번호 / 3: 카드키 / 4: 지문)
-
-    @ManyToOne
-    @JoinColumn(name="userSeq")
-    private User user;          // 사용자 구분자
+    private String nickname;    // 해제 방법 구분자(1: NFC / 2: 비밀번호 / 3: 카드키 / 4: 지문)
 
     @ManyToOne
     @JoinColumn(name="doorLockSeq")
