@@ -79,8 +79,7 @@ public class RegistDoorLockService {
         List<RegistDoorLock> data = registDoorLockRepository.findByDoorLock_DoorLockSeq(dto.getDoorLockSeq());
 
         // 4. 넘어온 도어락 구분자 및 사용자 구분자 코드로 등록된 데이터가 있는지 확인
-        if(data.isEmpty() &
-                registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, dto.getDoorLockSeq()).isPresent())
+        if(registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, dto.getDoorLockSeq()).isPresent())
             throw new RuntimeException();
 
         // 5. 사용자가 없을 경우, OWNER 권한 / 있을 경우, MEMBER 권한 으로 NFC 데이터 저장

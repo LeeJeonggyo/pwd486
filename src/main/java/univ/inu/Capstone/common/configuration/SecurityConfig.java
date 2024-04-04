@@ -31,7 +31,8 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/pw486/user/firstLogin"
                         , "/pw486/user/refreshLogin"
-                        , "/api/pw486/regist/machine").permitAll()
+                        , "/api/pw486/regist/machine"
+                        , "/machine/pw486/**").permitAll()
                 .antMatchers("/api/pw486/**").authenticated()
                 .and()
                 .sessionManagement()

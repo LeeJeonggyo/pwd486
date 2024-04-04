@@ -43,11 +43,11 @@ public class RegistDoorLockController {
     }
 
     /**
-     * 사용자 도어락 키(핸드폰) 등록
+     * 사용자 도어락 NFC 등록
      * @return ResponseEntity<DoorLockResponseDto.DoorLockResult>
      */
-    @PostMapping("/search")
-    public ResponseEntity<RegistDLResponseDto.RegistDL> registDL(@RequestBody RegistDLRequestDto.RegistDL dto, Authentication authentication){
+    @PostMapping("/registNfc")
+    public ResponseEntity<RegistDLResponseDto.RegistDL> registNfc(@RequestBody RegistDLRequestDto.RegistDL dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         log.info("userSeq : {}", userDetails.getUserSeq());
 
