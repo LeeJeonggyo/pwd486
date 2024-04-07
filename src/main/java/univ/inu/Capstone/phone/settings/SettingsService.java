@@ -82,9 +82,8 @@ public class SettingsService {
         return result;
     }
 
-
     /**
-     * member & guest 사용허가 API
+     * member & guest 사용허가
      * @param dto SettingsRequestDto.usePermit
      * @param userSeq Long
      * @return SettingsResponseDto.usePermit
@@ -114,6 +113,41 @@ public class SettingsService {
         entity.permit();
 
         return SettingsResponseDto.usePermit.builder()
+                .state(201)
+                .result("SUCCESS")
+                .build();
+    }
+
+    /**
+     * member & guest 삭제
+     * @param dto SettingsRequestDto.delNfcOther
+     * @param userSeq Long
+     * @return SettingsResponseDto.delNfcOther
+     */
+    @Transactional
+    public SettingsResponseDto.delNfcOther delNfcOther(SettingsRequestDto.delNfcOther dto, Long userSeq){
+        // 1. 삭제하려는 rdlSeq값 확인
+        Optional<RegistDoorLock> permitEntity = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (permitEntity.isEmpty())
+            return SettingsResponseDto.delNfcOther.builder()
+                    .state(404)
+                    .result("존재하지 않는 사용자입니다.")
+                    .build();
+
+        // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
+        Optional<RegistDoorLock> userEntity = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, permitEntity.get().getDoorLock().getDoorLockSeq());
+        if (userEntity.isEmpty()
+                || userEntity.get().getRdlAuth() != 1)
+            return SettingsResponseDto.delNfcOther.builder()
+                    .state(404)
+                    .result("승인 요청자의 정보가 올바르지 않습니다.")
+                    .build();
+
+        // 3. owner 권한이 맞을 경우, 사용 허가처리
+        RegistDoorLock entity = permitEntity.get();
+        registDoorLockRepository.delete(entity);
+
+        return SettingsResponseDto.delNfcOther.builder()
                 .state(201)
                 .result("SUCCESS")
                 .build();

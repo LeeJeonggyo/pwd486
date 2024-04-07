@@ -21,4 +21,9 @@ public class SettingsRequestDto {
     public static class usePermit {
         private Long rdlSeq;        // 등록 NFC 구분자
     }
+
+    @Data
+    public static class delNfcOther {
+        private Long rdlSeq;        // 삭제 NFC 구분자
+    }
 }

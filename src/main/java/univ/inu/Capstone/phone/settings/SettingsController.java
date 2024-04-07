@@ -58,7 +58,20 @@ public class SettingsController {
         return ResponseEntity.ok().body(settingsService.usePermit(dto, userDetails.getUserSeq()));
     }
 
+    /**
+     * member & guest 삭제
+     * @param dto SettingsRequestDto.delNfcOther
+     * @param authentication Authentication
+     * @return ResponseEntity<SettingsResponseDto.delNfcOther>
+     */
+    @PostMapping("/delete/nfc/other")
+    public ResponseEntity<SettingsResponseDto.delNfcOther> delNfcOther(@RequestBody SettingsRequestDto.delNfcOther dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.delNfcOther(dto, userDetails.getUserSeq()));
+    }
 
-    // member & guest 삭제 API
+
+
+
     // owner 권한 양도 API
 }
