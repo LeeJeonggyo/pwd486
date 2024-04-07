@@ -64,8 +64,15 @@ public class RegistDoorLockController {
         return ResponseEntity.ok().body(registDoorLockService.inviteCode(dto));
     }
 
-
-
+    /**
+     * 초대 코드 조회
+     * @param inviteCode String
+     * @return ResponseEntity<RegistDLResponseDto.searchInviteCode>
+     */
+    @GetMapping("/inviteCode/{inviteCode}/search")
+    public ResponseEntity<RegistDLResponseDto.searchInviteCode> searchInviteCode(@PathVariable("inviteCode") String inviteCode){
+        return ResponseEntity.ok().body(registDoorLockService.searchInviteCode(inviteCode));
+    }
 
     /**
      * owner 권한 이외, NFC 등록 API

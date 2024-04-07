@@ -116,12 +116,20 @@ public class RegistDoorLockService {
 
         // 2. 초대 코드 생성
         String inviteCode = makeInviteCode();
-        log.info(inviteCode);
+        log.info("inviteCode : {}",inviteCode);
+        Optional<DoorLockInvite> inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode);
+
+        while(inviteCodeEntity.isPresent()){
+            inviteCode = makeInviteCode();
+            log.info("inviteCode : {}",inviteCode);
+            inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode);
+        }
 
         // 3. 생성된 코드 및 도어락 & user & 등록 만료시간과 함께 정보 저장.
         DoorLockInvite doorLockInvite = DoorLockInvite.builder()
                 .inviteCode(inviteCode)
                 .rdlAuth(dto.getGiveAuth())
+                .useYn(0)
                 .doorLock(registDoorLock.get().getDoorLock())
                 .user(registDoorLock.get().getUser())
                 .build();
@@ -132,7 +140,10 @@ public class RegistDoorLockService {
                 .build();
     }
 
-    // 랜덤 초대 코드 생성
+    /**
+     * 랜덤 초대 코드 생성
+     * @return String
+     */
     private String makeInviteCode() {
         String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         int length = 10;
@@ -147,11 +158,32 @@ public class RegistDoorLockService {
 
 
     /**
+     * 초대 코드 조회
+     * @param inviteCode String
+     * @return RegistDLResponseDto.searchInviteCode
+     */
+    @Transactional
+    public RegistDLResponseDto.searchInviteCode searchInviteCode(String inviteCode){
+        Optional<DoorLockInvite> inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode);
+        if (inviteCodeEntity.isEmpty())
+            return RegistDLResponseDto.searchInviteCode.builder()
+                    .result("유효하지 않은 초대코드 입니다.")
+                    .build();
+        else return RegistDLResponseDto.searchInviteCode.builder()
+                .result("사용간한 초대코드입니다.")
+                .inviteSeq(inviteCodeEntity.get().getInviteSeq())
+                .doorLockSeq(inviteCodeEntity.get().getDoorLock().getDoorLockSeq())
+                .build();
+    }
+
+
+    /**
      * owner 권한 이외, NFC 등록 API
      * @param dto RegistDLRequestDto.registNfcOther
      * @param userSeq Long
      * @return RegistDLResponseDto.registNfcOther
      */
+    @Transactional
     public RegistDLResponseDto.registNfcOther registNfcOther(RegistDLRequestDto.registNfcOther dto, Long userSeq){
         // 1. 넘어온 userSeq 데이터가 있는지 확인
         Optional<User> user = userRepository.findById(userSeq);
@@ -162,8 +194,9 @@ public class RegistDoorLockService {
         if (doorLock.isEmpty()) throw new RuntimeException("알 수 없는 도어락입니다.");
 
         // 3. 초대 코드 조회를 통해 부여할 권한 확인
-        Optional<DoorLockInvite> inviteCode = doorLockInviteRepository.findById(dto.getInviteSeq());
-        if (inviteCode.isEmpty()) throw new RuntimeException("잘못된 초대코드 입니다.");
+        Optional<DoorLockInvite> inviteCode = doorLockInviteRepository.findByInviteSeq(dto.getInviteSeq());
+        if (inviteCode.isEmpty()) throw new RuntimeException("유효하지 않은 초대코드 입니다.");
+        DoorLockInvite inviteCodeEntity = inviteCode.get();
 
         // 4. 넘어온 도어락 구분자값으로 등록된 사용자가 있는지 확인(사용자가 없다는 건 OWNER 권한자가 없다는 의미가 됨.)
         List<RegistDoorLock> data = registDoorLockRepository.findByDoorLock_DoorLockSeq(dto.getDoorLockSeq());
@@ -178,10 +211,13 @@ public class RegistDoorLockService {
                 .user(user.get())
                 .doorLock(doorLock.get())
                 .rdlName(dto.getRdlName())
-                .rdlAuth(inviteCode.get().getRdlAuth())
+                .rdlAuth(inviteCodeEntity.getRdlAuth())
                 .rdlApprove(1)
                 .build();
         registDoorLockRepository.save(registDoorLock);
+
+        // 7. 초대코드 사용처리
+        inviteCodeEntity.usingCode();
 
         return RegistDLResponseDto.registNfcOther.builder()
                 .serialNo(registDoorLock.getDoorLock().getSerialNo())
