@@ -43,15 +43,27 @@ public class RegistDoorLockController {
     }
 
     /**
-     * 사용자 도어락 NFC 등록
+     * 사용자 도어락 NFC 등록 (owner)
+     * @param dto RegistDLRequestDto.RegistDL
+     * @param authentication Authentication
      * @return ResponseEntity<DoorLockResponseDto.DoorLockResult>
      */
     @PostMapping("/registNfc")
     public ResponseEntity<RegistDLResponseDto.RegistDL> registNfc(@RequestBody RegistDLRequestDto.RegistDL dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        log.info("userSeq : {}", userDetails.getUserSeq());
+        return ResponseEntity.ok().body(registDoorLockService.registDL(dto, userDetails.getUserSeq()));
+    }
 
-        RegistDLResponseDto.RegistDL result = registDoorLockService.registDL(dto, userDetails.getUserSeq());
-        return ResponseEntity.ok().body(result);
+
+    /**
+     * owner 권한 이외, NFC 등록 API
+     * @param dto RegistDLRequestDto.registNfcOther
+     * @param authentication Authentication
+     * @return ResponseEntity<RegistDLResponseDto.registNfcOther>
+     */
+    @PostMapping("/registNfcOther")
+    public ResponseEntity<RegistDLResponseDto.registNfcOther> registNfcOther(@RequestBody RegistDLRequestDto.registNfcOther dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(registDoorLockService.registNfcOther(dto, userDetails.getUserSeq()));
     }
 }

@@ -13,4 +13,11 @@ public class RegistDLResponseDto {
         private String rdlName;     // 카드키 이름
         private String serialNo;   // 도어락 구분자
     }
+
+    @Getter
+    @Builder
+    public static class registNfcOther {
+        private String rdlName;     // 카드키 이름
+        private String serialNo;   // 도어락 구분자
+    }
 }
