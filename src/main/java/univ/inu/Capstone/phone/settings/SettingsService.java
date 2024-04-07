@@ -82,4 +82,39 @@ public class SettingsService {
         return result;
     }
 
+
+    /**
+     * member & guest 사용허가 API
+     * @param dto SettingsRequestDto.usePermit
+     * @param userSeq Long
+     * @return SettingsResponseDto.usePermit
+     */
+    @Transactional
+    public SettingsResponseDto.usePermit usePermit(SettingsRequestDto.usePermit dto, Long userSeq){
+        // 1. 사용을 허가하려는 rdlSeq값 확인
+        Optional<RegistDoorLock> permitEntity = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (permitEntity.isEmpty())
+            return SettingsResponseDto.usePermit.builder()
+                    .state(404)
+                    .result("피승인자의 정보가 올바르지 않습니다.")
+                    .build();
+
+        // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
+        Optional<RegistDoorLock> userEntity = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, permitEntity.get().getDoorLock().getDoorLockSeq());
+        if (userEntity.isEmpty())
+            return SettingsResponseDto.usePermit.builder()
+                    .state(404)
+                    .result("승인 요청자의 정보가 올바르지 않습니다.")
+                    .build();
+
+        // 3. owner 권한이 맞을 경우, 사용 허가처리
+        RegistDoorLock entity = permitEntity.get();
+        entity.permit();
+
+        return SettingsResponseDto.usePermit.builder()
+                .state(201)
+                .result("SUCCESS")
+                .build();
+    }
+
 }

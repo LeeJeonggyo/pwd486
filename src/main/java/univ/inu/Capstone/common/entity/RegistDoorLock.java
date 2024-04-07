@@ -27,4 +27,8 @@ public class RegistDoorLock extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="doorLockSeq")
     private DoorLock doorLock;   // 도어락 구분자
+
+    public void permit(){
+        this.rdlApprove = 1;
+    }
 }

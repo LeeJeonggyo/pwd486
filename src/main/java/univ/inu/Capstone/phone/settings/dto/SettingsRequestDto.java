@@ -16,4 +16,9 @@ public class SettingsRequestDto {
     public static class viewLog {
         private Long doorLockSeq;       // 도어락 구분자
     }
+
+    @Data
+    public static class usePermit {
+        private Long rdlSeq;        // 등록 NFC 구분자
+    }
 }

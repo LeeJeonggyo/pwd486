@@ -45,4 +45,20 @@ public class SettingsController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.viewLog(dto, userDetails.getUserSeq()));
     }
+
+    /**
+     * member & guest 사용허가
+     * @param dto SettingsRequestDto.usePermit
+     * @param authentication Authentication
+     * @return ResponseEntity<SettingsResponseDto.usePermit>
+     */
+    @PostMapping("/use/permit")
+    public ResponseEntity<SettingsResponseDto.usePermit> usePermit(@RequestBody SettingsRequestDto.usePermit dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.usePermit(dto, userDetails.getUserSeq()));
+    }
+
+
+    // member & guest 삭제 API
+    // owner 권한 양도 API
 }

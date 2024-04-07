@@ -37,4 +37,11 @@ public class SettingsResponseDto {
                 this.openMethod = "정의 할수 없는 출입";
         }
     }
+
+    @Getter
+    @Builder
+    public static class usePermit {
+        private int state;          // 결과 state
+        private String result;      // 결과 msg
+    }
 }
