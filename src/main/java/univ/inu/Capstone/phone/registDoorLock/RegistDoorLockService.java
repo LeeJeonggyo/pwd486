@@ -11,6 +11,7 @@ import univ.inu.Capstone.common.entity.*;
 import univ.inu.Capstone.common.repository.*;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -115,14 +116,15 @@ public class RegistDoorLockService {
         if(registDoorLock.isEmpty() || registDoorLock.get().getRdlAuth() != 1) throw new RuntimeException("해당 사용자는 owner 권한이 없습니다.");
 
         // 2. 초대 코드 생성
+        LocalDateTime expireTime = LocalDateTime.now().minusMinutes(1);
         String inviteCode = makeInviteCode();
         log.info("inviteCode : {}",inviteCode);
-        Optional<DoorLockInvite> inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode);
+        Optional<DoorLockInvite> inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode, expireTime);
 
         while(inviteCodeEntity.isPresent()){
             inviteCode = makeInviteCode();
             log.info("inviteCode : {}",inviteCode);
-            inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode);
+            inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode, expireTime);
         }
 
         // 3. 생성된 코드 및 도어락 & user & 등록 만료시간과 함께 정보 저장.
@@ -133,6 +135,7 @@ public class RegistDoorLockService {
                 .doorLock(registDoorLock.get().getDoorLock())
                 .user(registDoorLock.get().getUser())
                 .build();
+        doorLockInviteRepository.save(doorLockInvite);
 
         // 4. inviteCode 반환
         return RegistDLResponseDto.inviteCode.builder()
@@ -164,7 +167,8 @@ public class RegistDoorLockService {
      */
     @Transactional
     public RegistDLResponseDto.searchInviteCode searchInviteCode(String inviteCode){
-        Optional<DoorLockInvite> inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode);
+        LocalDateTime expireTime = LocalDateTime.now().minusMinutes(1);
+        Optional<DoorLockInvite> inviteCodeEntity = doorLockInviteRepository.findByInviteCode(inviteCode, expireTime);
         if (inviteCodeEntity.isEmpty())
             return RegistDLResponseDto.searchInviteCode.builder()
                     .result("유효하지 않은 초대코드 입니다.")
@@ -194,7 +198,8 @@ public class RegistDoorLockService {
         if (doorLock.isEmpty()) throw new RuntimeException("알 수 없는 도어락입니다.");
 
         // 3. 초대 코드 조회를 통해 부여할 권한 확인
-        Optional<DoorLockInvite> inviteCode = doorLockInviteRepository.findByInviteSeq(dto.getInviteSeq());
+        LocalDateTime expireTime = LocalDateTime.now().minusMinutes(1);
+        Optional<DoorLockInvite> inviteCode = doorLockInviteRepository.findByInviteSeq(dto.getInviteSeq(), expireTime);
         if (inviteCode.isEmpty()) throw new RuntimeException("유효하지 않은 초대코드 입니다.");
         DoorLockInvite inviteCodeEntity = inviteCode.get();
 
