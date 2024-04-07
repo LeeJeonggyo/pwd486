@@ -1,6 +1,7 @@
 package univ.inu.Capstone.phone.registDoorLock;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import univ.inu.Capstone.common.dto.doorlock.DoorLockRequestDto;
 import univ.inu.Capstone.common.dto.doorlock.DoorLockResponseDto;
@@ -12,7 +13,9 @@ import univ.inu.Capstone.common.repository.*;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RegistDoorLockService {
@@ -100,6 +103,48 @@ public class RegistDoorLockService {
                 .rdlName(registDoorLock.getRdlName())
                 .build();
     }
+
+    /**
+     * member, guest 초대 코드 생성
+     * @param dto RegistDLRequestDto.inviteCode
+     * @return RegistDLResponseDto.inviteCode
+     */
+    public RegistDLResponseDto.inviteCode inviteCode(RegistDLRequestDto.inviteCode dto){
+        // 1. 해당 사용자가 해당 도어락의 OWNER 권한을 가진자가 맞는지 확인 (맞아야 함.)
+        Optional<RegistDoorLock> registDoorLock = registDoorLockRepository.findById(dto.getRdlSeq());
+        if(registDoorLock.isEmpty() || registDoorLock.get().getRdlAuth() != 1) throw new RuntimeException("해당 사용자는 owner 권한이 없습니다.");
+
+        // 2. 초대 코드 생성
+        String inviteCode = makeInviteCode();
+        log.info(inviteCode);
+
+        // 3. 생성된 코드 및 도어락 & user & 등록 만료시간과 함께 정보 저장.
+        DoorLockInvite doorLockInvite = DoorLockInvite.builder()
+                .inviteCode(inviteCode)
+                .rdlAuth(dto.getGiveAuth())
+                .doorLock(registDoorLock.get().getDoorLock())
+                .user(registDoorLock.get().getUser())
+                .build();
+
+        // 4. inviteCode 반환
+        return RegistDLResponseDto.inviteCode.builder()
+                .inviteCode(inviteCode)
+                .build();
+    }
+
+    // 랜덤 초대 코드 생성
+    private String makeInviteCode() {
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        int length = 10;
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            sb.append(characters.charAt(index));
+        }
+        return sb.toString();
+    }
+
 
     /**
      * owner 권한 이외, NFC 등록 API
