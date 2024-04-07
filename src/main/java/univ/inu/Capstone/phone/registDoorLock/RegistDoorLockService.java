@@ -33,7 +33,7 @@ public class RegistDoorLockService {
      * @param dto DoorLockRequestDto.DoorLockBasic
      * @return DoorLockResponseDto.DoorLockResult
      */
-    public DoorLockResponseDto.SaveMachine saveMachine(DoorLockRequestDto.DoorLockBasic dto){
+    public DoorLockResponseDto.SaveMachine registMachine(DoorLockRequestDto.DoorLockBasic dto){
         String result = "SUCCESS";
         Optional<DoorLock> data = doorLockRepository.findBySerialNo(dto.getSerialNo());
 

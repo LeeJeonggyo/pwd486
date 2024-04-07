@@ -31,12 +31,12 @@ public class LoginService {
     private Long refreshExpireTimeMs = 1000*60*10L; // 10분
 
     /**
-     * 카카오 로그인 (최초) /
-     * 파라미터 = kakaoId, nickname, email 넘어옴. /
-     * return = accessToken, refreshToken /
+     * 카카오 로그인 (최초)
+     * @param dto LoginDto
+     * @return TokenDto.responseDto
      */
     @Transactional
-    public TokenDto firstLogin(LoginDto dto){
+    public TokenDto.responseDto firstLogin(LoginDto dto){
         // 1. kakaoId로 중복 체크 진행
         Optional<User> user = userRepository.findByKakaoId(dto.getKakaoId());
 
@@ -65,7 +65,7 @@ public class LoginService {
         login.updateRefreshToken(refreshToken);
 
         // TokenDto에 데이터 담아서 전달
-        return TokenDto.builder()
+        return TokenDto.responseDto.builder()
                 .nickname(userDto.getNickname())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -73,12 +73,12 @@ public class LoginService {
     }
 
     /**
-     * 카카오 로그인 (최초) /
-     * 파라미터 = kakaoId, nickname, email 넘어옴. /
-     * return = accessToken, refreshToken /
+     * accessToken 재발급 (only refreshToken)
+     * @param request HttpServletRequest
+     * @return TokenDto.responseDto
      */
     @Transactional
-    public TokenDto refreshLogin(HttpServletRequest request){
+    public TokenDto.responseDto refreshLogin(HttpServletRequest request){
 
         // http header로 부터 refresh token 추출
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -112,7 +112,7 @@ public class LoginService {
         checkUserEntity.updateRefreshToken(reRefreshToken);
 
         // TokenDto에 데이터 담아서 전달
-        return TokenDto.builder()
+        return TokenDto.responseDto.builder()
                 .nickname(userDto.getNickname())
                 .accessToken(reAccessToken)
                 .refreshToken(reRefreshToken)

@@ -23,8 +23,10 @@ public class SettingsResponseDto {
         private String inpTime;         // 출입 시간
 
         public void setOpenMethod(Long openMethod) {
-            if (openMethod == 1L)
-                this.openMethod = "NFC";
+            if (openMethod == 0L)
+                this.openMethod = "해제 실패";
+            else if (openMethod == 1L)
+                this.openMethod = "password";
             else if (openMethod == 2L)
                 this.openMethod = "password";
             else if (openMethod == 3L)

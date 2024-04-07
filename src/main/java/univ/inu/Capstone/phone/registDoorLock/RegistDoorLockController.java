@@ -26,8 +26,8 @@ public class RegistDoorLockController {
      * @return ResponseEntity<DoorLockResponseDto.DoorLockResult>
      */
     @PostMapping("/machine")
-    public ResponseEntity<DoorLockResponseDto.SaveMachine> saveMachine(@RequestBody DoorLockRequestDto.DoorLockBasic dto){
-        DoorLockResponseDto.SaveMachine result = registDoorLockService.saveMachine(dto);
+    public ResponseEntity<DoorLockResponseDto.SaveMachine> registMachine(@RequestBody DoorLockRequestDto.DoorLockBasic dto){
+        DoorLockResponseDto.SaveMachine result = registDoorLockService.registMachine(dto);
         return ResponseEntity.ok().body(result);
     }
 

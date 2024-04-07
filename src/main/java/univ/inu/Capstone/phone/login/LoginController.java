@@ -19,34 +19,35 @@ public class LoginController {
     private final LoginService loginService;
 
     /**
-     * 카카오 로그인 (최초) /
-     * 파라미터 = kakaoId, nickname, email 넘어옴. /
-     * return = accessToken, refreshToken /
+     * 카카오 로그인 (최초)
+     * @param dto LoginDto
+     * @return ResponseEntity<TokenDto.responseDto>
      */
     @PostMapping("/firstLogin")
-    public ResponseEntity<TokenDto> firstLogin(@RequestBody LoginDto dto) {
-        TokenDto result = loginService.firstLogin(dto);
-        return ResponseEntity.ok().body(result);
+    public ResponseEntity<TokenDto.responseDto> firstLogin(@RequestBody LoginDto dto) {
+        return ResponseEntity.ok().body(loginService.firstLogin(dto));
     }
 
     /**
-     * 지문 로그인 - accessToken 으로 로그인 (only accessToken) /
-     * 파라미터 = accessToken /
-     * return = nickname /
+     * 지문 로그인 - accessToken 으로 로그인 (only accessToken)
+     * @param authentication Authentication
+     * @return ResponseEntity<TokenDto.accessLogin>
      */
     @PostMapping("/accessLogin")
-    public ResponseEntity<String> accessLogin(Authentication authentication) {
-        return ResponseEntity.ok().body(authentication.getName());
+    public ResponseEntity<TokenDto.accessLogin> accessLogin(Authentication authentication) {
+        return ResponseEntity.ok().body(TokenDto.accessLogin.builder()
+                .result("SUCCESS")
+                .nickname(authentication.getName())
+                .build());
     }
 
     /**
-     * 지문 로그인 - accessToken 재발급 (only refreshToken) /
-     * 파라미터 = refreshToken /
-     * return = ok /
+     * accessToken 재발급 (only refreshToken)
+     * @param request HttpServletRequest
+     * @return ResponseEntity<TokenDto.responseDto>
      */
     @PostMapping("/refreshLogin")
-    public ResponseEntity<TokenDto> refreshLogin(HttpServletRequest request) {
-        TokenDto result = loginService.refreshLogin(request);
-        return ResponseEntity.ok().body(result);
+    public ResponseEntity<TokenDto.responseDto> refreshLogin(HttpServletRequest request) {
+        return ResponseEntity.ok().body(loginService.refreshLogin(request));
     }
 }

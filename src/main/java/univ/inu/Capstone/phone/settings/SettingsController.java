@@ -13,6 +13,7 @@ import univ.inu.Capstone.phone.settings.dto.SettingsRequestDto;
 import univ.inu.Capstone.phone.settings.dto.SettingsResponseDto;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -37,10 +38,10 @@ public class SettingsController {
      * 출입로그 조회
      * @param dto SettingsRequestDto.viewLog
      * @param authentication Authentication
-     * @return ResponseEntity<List<SettingsResponseDto.viewLog>>
+     * @return ResponseEntity<Map<String, Object>>
      */
     @PostMapping("/view/log")
-    public ResponseEntity<List<SettingsResponseDto.viewLog>> viewLog(@RequestBody SettingsRequestDto.viewLog dto, Authentication authentication){
+    public ResponseEntity<Map<String, Object>> viewLog(@RequestBody SettingsRequestDto.viewLog dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.viewLog(dto, userDetails.getUserSeq()));
     }
