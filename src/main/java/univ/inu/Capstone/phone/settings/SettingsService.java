@@ -131,7 +131,7 @@ public class SettingsService {
         if (permitEntity.isEmpty())
             return SettingsResponseDto.delNfcOther.builder()
                     .state(404)
-                    .result("존재하지 않는 사용자입니다.")
+                    .result("피승인자의 정보가 올바르지 않습니다.")
                     .build();
 
         // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
@@ -148,6 +148,45 @@ public class SettingsService {
         registDoorLockRepository.delete(entity);
 
         return SettingsResponseDto.delNfcOther.builder()
+                .state(201)
+                .result("SUCCESS")
+                .build();
+    }
+
+    /**
+     * owner 권한 양도
+     * @param dto SettingsRequestDto.tossOwnerAuth
+     * @param userSeq Long
+     * @return SettingsResponseDto.tossOwnerAuth
+     */
+    @Transactional
+    public SettingsResponseDto.tossOwnerAuth tossOwnerAuth(SettingsRequestDto.tossOwnerAuth dto, Long userSeq){
+        // 1. 양도받는 사용자 rdlSeq값 확인
+        Optional<RegistDoorLock> otherOpt = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (otherOpt.isEmpty()
+                || otherOpt.get().getRdlApprove() == 0)
+            return SettingsResponseDto.tossOwnerAuth.builder()
+                    .state(404)
+                    .result("피승인자의 정보가 올바르지 않습니다.")
+                    .build();
+
+        // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
+        Optional<RegistDoorLock> userOpt = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, otherOpt.get().getDoorLock().getDoorLockSeq());
+        if (userOpt.isEmpty()
+                || userOpt.get().getRdlAuth() != 1)
+            return SettingsResponseDto.tossOwnerAuth.builder()
+                    .state(404)
+                    .result("승인 요청자의 정보가 올바르지 않습니다.")
+                    .build();
+
+        // 3. owner 권한 양도
+        RegistDoorLock otherEntity = otherOpt.get();
+        RegistDoorLock userEntity = userOpt.get();
+
+        userEntity.changeAuth(otherEntity.getRdlAuth());
+        otherEntity.changeAuth(1);
+
+        return SettingsResponseDto.tossOwnerAuth.builder()
                 .state(201)
                 .result("SUCCESS")
                 .build();

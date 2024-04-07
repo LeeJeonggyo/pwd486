@@ -28,7 +28,15 @@ public class RegistDoorLock extends BaseEntity {
     @JoinColumn(name="doorLockSeq")
     private DoorLock doorLock;   // 도어락 구분자
 
+    // 승인여부 변경 (0: 미승인 / 1: 승인)
     public void permit(){
         this.rdlApprove = 1;
     }
+
+    // 권한 변경
+    public void changeAuth(int rdlAuth){
+        this.rdlAuth = rdlAuth;
+    }
+
+
 }

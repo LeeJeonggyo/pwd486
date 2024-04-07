@@ -51,4 +51,11 @@ public class SettingsResponseDto {
         private int state;          // 결과 state
         private String result;      // 결과 msg
     }
+
+    @Getter
+    @Builder
+    public static class tossOwnerAuth {
+        private int state;          // 결과 state
+        private String result;      // 결과 msg
+    }
 }

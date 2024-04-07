@@ -70,8 +70,15 @@ public class SettingsController {
         return ResponseEntity.ok().body(settingsService.delNfcOther(dto, userDetails.getUserSeq()));
     }
 
-
-
-
-    // owner 권한 양도 API
+    /**
+     * owner 권한 양도
+     * @param dto SettingsRequestDto.tossOwnerAuth
+     * @param authentication Authentication
+     * @return ResponseEntity<SettingsResponseDto.tossOwnerAuth>
+     */
+    @PostMapping("/toss/owner")
+    public ResponseEntity<SettingsResponseDto.tossOwnerAuth> tossOwnerAuth(@RequestBody SettingsRequestDto.tossOwnerAuth dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.tossOwnerAuth(dto, userDetails.getUserSeq()));
+    }
 }
