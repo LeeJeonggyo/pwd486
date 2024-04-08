@@ -175,7 +175,7 @@ public class RegistDoorLockService {
                     .result("유효하지 않은 초대코드 입니다.")
                     .build();
         else return RegistDLResponseDto.searchInviteCode.builder()
-                .result("사용간한 초대코드입니다.")
+                .result("사용가능한 초대코드입니다.")
                 .inviteSeq(inviteCodeEntity.get().getInviteSeq())
                 .doorLockSeq(inviteCodeEntity.get().getDoorLock().getDoorLockSeq())
                 .build();
