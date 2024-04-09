@@ -26,11 +26,13 @@ public class ApiResponse<T> {
         this.message = message;
         this.data = data;
     }
-    public static <T> ApiResponse<T> SUCCESS (Integer code, String message) {
-        return new ApiResponse<>(code, ResponseStatus.SUCCESS, message);
+    public static <T> ApiResponse<T> SUCCESS (String message) {
+        // front 요청으로 SUCCESS 코드는 201로 통일
+        return new ApiResponse<>(201, ResponseStatus.SUCCESS, message);
     }
-    public static <T> ApiResponse<T> SUCCESS (Integer code, String message, T data) {
-        return new ApiResponse<>(code, ResponseStatus.SUCCESS, message, data);
+    public static <T> ApiResponse<T> SUCCESS (String message, T data) {
+        // front 요청으로 SUCCESS 코드는 201로 통일
+        return new ApiResponse<>(201, ResponseStatus.SUCCESS, message, data);
     }
 
     public static <T> ApiResponse<T> FAILURE (Integer code, String message) {
