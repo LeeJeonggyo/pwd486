@@ -33,6 +33,11 @@ public class SettingsRequestDto {
     }
 
     @Data
+    public static class delKeyCard {
+        private Long keyCardSeq;    // 삭제 카드키 구분자
+    }
+
+    @Data
     public static class tossOwnerAuth {
         private Long rdlSeq;        // owner 권한을 양도할 NFC 구분자
     }

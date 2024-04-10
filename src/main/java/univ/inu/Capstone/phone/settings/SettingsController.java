@@ -85,6 +85,18 @@ public class SettingsController {
     }
 
     /**
+     * 카드키 삭제
+     * @param dto SettingsRequestDto.delKeyCard
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/delete/keyCard")
+    public ResponseEntity<?> delKeyCard(@RequestBody SettingsRequestDto.delKeyCard dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.delKeyCard(dto, userDetails.getUserSeq()));
+    }
+
+    /**
      * owner 권한 양도
      * @param dto SettingsRequestDto.tossOwnerAuth
      * @param authentication Authentication

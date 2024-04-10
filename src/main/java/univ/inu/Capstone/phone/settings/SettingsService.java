@@ -201,7 +201,7 @@ public class SettingsService {
                     .result("승인 요청자의 정보가 올바르지 않습니다.")
                     .build();
 
-        // 3. owner 권한이 맞을 경우, 사용 허가처리
+        // 3. owner 권한이 맞을 경우, 삭제 처리
         RegistDoorLock entity = permitEntity.get();
         registDoorLockRepository.delete(entity);
 
@@ -209,6 +209,34 @@ public class SettingsService {
                 .state(201)
                 .result("SUCCESS")
                 .build();
+    }
+
+    /**
+     * 카드키 삭제
+     * @param dto SettingsRequestDto.delKeyCard
+     * @param userSeq Long
+     * @return ApiResponse<?>
+     */
+    @Transactional
+    public ApiResponse<?> delKeyCard(SettingsRequestDto.delKeyCard dto, Long userSeq){
+        // 1. 삭제하려는 keyCardSeq 값 확인
+        Optional<KeyCard> permitEntity = keyCardRepository.findById(dto.getKeyCardSeq());
+        if (permitEntity.isEmpty())
+            return ApiResponse.FAILURE(404, "삭제하려는 정보가 올바르지 않습니다.");
+
+        // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
+        Optional<RegistDoorLock> userEntity = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, permitEntity.get().getDoorLock().getDoorLockSeq());
+        if (userEntity.isEmpty()
+                || userEntity.get().getRdlAuth() != 1)
+            return ApiResponse.FAILURE(404, "삭제 요청자의 정보가 올바르지 않습니다.");
+
+        // 3. owner 권한이 맞을 경우, 라즈베리와 통신해서 도어락기기에서 정보 삭제
+
+        // 4. DB 에서 카드 정보 삭제
+        KeyCard entity = permitEntity.get();
+        keyCardRepository.delete(entity);
+
+        return ApiResponse.SUCCESS("삭제되었습니다.");
     }
 
     /**
