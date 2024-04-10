@@ -97,4 +97,25 @@ public class SaveKeyService {
 
         return ApiResponse.SUCCESS("비밀번호가 변경되었습니다.");
     }
+
+    /**
+     * 카드키 삭제
+     * @param dto SaveKeyRequestDto.delCardKey
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> delCardKey(SaveKeyRequestDto.delCardKey dto){
+        // 1. 도어락 확인
+        Optional<DoorLock> doorLockOpt = doorLockRepository.findBySerialNo(dto.getSerialNo());
+        if (doorLockOpt.isEmpty()) return ApiResponse.FAILURE(404, "요청한 도어락 정보를 찾을 수 없습니다.");
+        DoorLock doorLock = doorLockOpt.get();
+
+        // 2. 해당 번호로 등록된 카드키가 있는지 확인
+        Optional<KeyCard> keyCard = keyCardRepository.findByKeyCardDataAndDoorLock_DoorLockSeq(dto.getKeyCardData(), doorLock.getDoorLockSeq());
+        if (keyCard.isEmpty()) return ApiResponse.FAILURE(400, "존재하지 않는 카드키입니다.");
+
+        // 3. 2에서 있을 경우, 삭제
+        keyCardRepository.delete(keyCard.get());
+
+        return ApiResponse.SUCCESS("카드키가 삭제 되었습니다.");
+    }
 }

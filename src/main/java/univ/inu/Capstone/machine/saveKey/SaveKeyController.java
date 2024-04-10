@@ -41,7 +41,15 @@ public class SaveKeyController {
         return ResponseEntity.ok().body(saveKeyService.changePwd(dto));
     }
 
-    // 카드키 삭제
+    /**
+     * 카드키 삭제
+     * @param dto SaveKeyRequestDto.delCardKey
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/del/cardKey")
+    public ResponseEntity<?> delCardKey(@RequestBody SaveKeyRequestDto.delCardKey dto){
+        return ResponseEntity.ok().body(saveKeyService.delCardKey(dto));
+    }
 
     // 지문 삭제
 
