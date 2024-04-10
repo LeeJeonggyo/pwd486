@@ -88,13 +88,13 @@ public class SettingsService {
      * @return ApiResponse<?>
      */
     public ApiResponse<?> viewRegistKey(SettingsRequestDto.viewRegistKey dto, Long userSeq){
-        // 1. rdlSeq 로 등록된 NFC 확인
+        // 1. rdlSeq 로 등록된 NFC 확인 (해당 정보 없으면 안됨.)
         Optional<RegistDoorLock> rdlOpt = registDoorLockRepository.findById(dto.getRdlSeq());
         if (rdlOpt.isEmpty()) return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
         RegistDoorLock registDoorLock = rdlOpt.get();
 
-        // 2. 1에서 구한 userSeq 값이 로그인 userSeq 와 같은지 확인
-        if (userSeq.equals(registDoorLock.getUser().getUserSeq())) return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
+        // 2. 1에서 구한 userSeq 값이 로그인 userSeq 와 같은지 확인 (다르면 안됨.)
+        if (!userSeq.equals(registDoorLock.getUser().getUserSeq())) return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
 
         // 3. owner 권한인지 확인
         if (registDoorLock.getRdlAuth() != 1) return ApiResponse.FAILURE(401,"조회 권한이 없습니다.");
