@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.utils.CustomUserDetails;
 import univ.inu.Capstone.phone.settings.dto.SettingsRequestDto;
 import univ.inu.Capstone.phone.settings.dto.SettingsResponseDto;
@@ -45,6 +46,19 @@ public class SettingsController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.viewLog(dto, userDetails.getUserSeq()));
     }
+
+    /**
+     * 등록된 nfc, 지문, 카드키 전체 조회
+     * @param dto SettingsRequestDto.viewRegistKey
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/view/regist/key")
+    public ResponseEntity<?> viewRegistKey(@RequestBody SettingsRequestDto.viewRegistKey dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.viewRegistKey(dto, userDetails.getUserSeq()));
+    }
+
 
     /**
      * member & guest 사용허가

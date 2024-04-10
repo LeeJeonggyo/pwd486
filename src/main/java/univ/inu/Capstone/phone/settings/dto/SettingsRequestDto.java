@@ -18,6 +18,11 @@ public class SettingsRequestDto {
     }
 
     @Data
+    public static class viewRegistKey {
+        private Long rdlSeq;        // NFC 구분자
+    }
+
+    @Data
     public static class usePermit {
         private Long rdlSeq;        // 등록 NFC 구분자
     }

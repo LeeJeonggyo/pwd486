@@ -6,6 +6,7 @@ import lombok.Getter;
 import univ.inu.Capstone.common.entity.OpenLog;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class SettingsResponseDto {
     @Getter
@@ -36,6 +37,38 @@ public class SettingsResponseDto {
             else
                 this.openMethod = "정의 할수 없는 출입";
         }
+    }
+
+    @Getter
+    @Builder
+    public static class viewRegistKey {
+        private List<viewRegistKeyNfc> rdlList;         // NFC 정보 리스트
+        private List<viewRegistKeyCard> keyCardList;    // 카드키 정보 리스트
+        private List<viewRegistKeyBio> keyBioList;      // 지문 정보 리스트
+
+    }
+
+    @Getter
+    @Builder
+    public static class viewRegistKeyNfc {
+        private Long rdlSeq;    // 구분자
+        private String rdlName; // 카드키 이름
+        private int rdlAuth;    // 권한 (1:OWNER / 2:MEMBER / 3:GUEST)
+        private int rdlApprove; // 승인여부 (0: 미승인 / 1: 승인) - OWNER 권한은 무조건 1
+    }
+
+    @Getter
+    @Builder
+    public static class viewRegistKeyCard {
+        private Long keyCardSeq;            // 구분자
+        private String keyCardData;         // 등록된 카드키 번호
+    }
+
+    @Getter
+    @Builder
+    public static class viewRegistKeyBio {
+        private Long keyBioSeq;             // 구분자
+        private String keyBioData;          // 등록된 지문 번호
     }
 
     @Getter

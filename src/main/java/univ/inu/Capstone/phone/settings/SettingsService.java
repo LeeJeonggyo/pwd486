@@ -2,12 +2,9 @@ package univ.inu.Capstone.phone.settings;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import univ.inu.Capstone.common.entity.DoorLockSecret;
-import univ.inu.Capstone.common.entity.OpenLog;
-import univ.inu.Capstone.common.entity.RegistDoorLock;
-import univ.inu.Capstone.common.repository.DoorLockSecretRespository;
-import univ.inu.Capstone.common.repository.OpenLogRepository;
-import univ.inu.Capstone.common.repository.RegistDoorLockRepository;
+import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
+import univ.inu.Capstone.common.entity.*;
+import univ.inu.Capstone.common.repository.*;
 import univ.inu.Capstone.phone.settings.dto.SettingsRequestDto;
 import univ.inu.Capstone.phone.settings.dto.SettingsResponseDto;
 
@@ -21,6 +18,8 @@ public class SettingsService {
 
     private final RegistDoorLockRepository registDoorLockRepository;
     private final DoorLockSecretRespository doorLockSecretRespository;
+    private final KeyCardRepository keyCardRepository;
+    private final KeyBioRepository keyBioRepository;
     private final OpenLogRepository openLogRepository;
 
     /**
@@ -80,6 +79,65 @@ public class SettingsService {
         result.put("data", resultList);
 
         return result;
+    }
+
+    /**
+     * 등록된 nfc, 지문, 카드키 전체 조회
+     * @param dto SettingsRequestDto.viewRegistKey
+     * @param userSeq Long
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> viewRegistKey(SettingsRequestDto.viewRegistKey dto, Long userSeq){
+        // 1. rdlSeq 로 등록된 NFC 확인
+        Optional<RegistDoorLock> rdlOpt = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (rdlOpt.isEmpty()) return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
+        RegistDoorLock registDoorLock = rdlOpt.get();
+
+        // 2. 1에서 구한 userSeq 값이 로그인 userSeq 와 같은지 확인
+        if (userSeq.equals(registDoorLock.getUser().getUserSeq())) return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
+
+        // 3. owner 권한인지 확인
+        if (registDoorLock.getRdlAuth() != 1) return ApiResponse.FAILURE(401,"조회 권한이 없습니다.");
+
+        // 4. NFC 정보
+        List<RegistDoorLock> rdlList = registDoorLockRepository.findByDoorLock_DoorLockSeq(registDoorLock.getDoorLock().getDoorLockSeq());
+        List<SettingsResponseDto.viewRegistKeyNfc> rdlListDto = new ArrayList<>();
+        for (RegistDoorLock entity : rdlList) {
+            rdlListDto.add(SettingsResponseDto.viewRegistKeyNfc.builder()
+                            .rdlSeq(entity.getRdlSeq())
+                            .rdlName(entity.getRdlName())
+                            .rdlAuth(entity.getRdlAuth())
+                            .rdlApprove(entity.getRdlApprove())
+                            .build());
+        }
+
+        // 5. 카드키 정보
+        List<KeyCard> keyCardList = keyCardRepository.findByDoorLock_DoorLockSeq(registDoorLock.getDoorLock().getDoorLockSeq());
+        List<SettingsResponseDto.viewRegistKeyCard> keyCardListDto = new ArrayList<>();
+        for (KeyCard entity : keyCardList) {
+            keyCardListDto.add(SettingsResponseDto.viewRegistKeyCard.builder()
+                    .keyCardSeq(entity.getKeyCardSeq())
+                    .keyCardData(entity.getKeyCardData())
+                    .build());
+        }
+
+        // 6. 지문 정보
+        List<KeyBio> keyBioList = keyBioRepository.findByDoorLock_DoorLockSeq(registDoorLock.getDoorLock().getDoorLockSeq());
+        List<SettingsResponseDto.viewRegistKeyBio> keyBioListDto = new ArrayList<>();
+        for (KeyBio entity : keyBioList) {
+            keyBioListDto.add(SettingsResponseDto.viewRegistKeyBio.builder()
+                    .keyBioSeq(entity.getKeyBioSeq())
+                    .keyBioData(entity.getKeyBioData())
+                    .build());
+        }
+
+        return ApiResponse.SUCCESS(
+                "조회가 완료되었습니다.",
+                SettingsResponseDto.viewRegistKey.builder()
+                        .rdlList(rdlListDto)
+                        .keyCardList(keyCardListDto)
+                        .keyBioList(keyBioListDto)
+                        .build());
     }
 
     /**
