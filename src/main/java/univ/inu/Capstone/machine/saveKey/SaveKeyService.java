@@ -78,7 +78,7 @@ public class SaveKeyService {
 
     /**
      * 비밀번호 변경
-     * @param dto SaveKeyRequestDto.saveBioKey
+     * @param dto SaveKeyRequestDto.changePwd
      * @return ApiResponse<?>
      */
     public ApiResponse<?> changePwd(SaveKeyRequestDto.changePwd dto){
@@ -95,6 +95,6 @@ public class SaveKeyService {
         DoorLockSecret update = doorLockSecret.get();
         update.changePw(dto.getSecretNo(), null);
 
-        return ApiResponse.SUCCESS("지문 등록에 성공했습니다.");
+        return ApiResponse.SUCCESS("비밀번호가 변경되었습니다.");
     }
 }
