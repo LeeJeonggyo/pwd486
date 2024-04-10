@@ -16,7 +16,7 @@ public class KeyCard extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long keyCardSeq;            // 구분자
-    private String cardKeyData;         // 등록된 카드키 번호
+    private String keyCardData;         // 등록된 카드키 번호
 
     @OneToOne
     @JoinColumn(name="doorLockSeq")

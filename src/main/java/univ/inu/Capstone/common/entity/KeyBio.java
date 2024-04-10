@@ -15,8 +15,8 @@ import javax.persistence.*;
 public class KeyBio extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long keyBioSeq;               // 구분자
-    private String bioKeyData;         // 등록된 카드키 번호
+    private Long keyBioSeq;             // 구분자
+    private String keyBioData;          // 등록된 카드키 번호
 
     @OneToOne
     @JoinColumn(name="doorLockSeq")
