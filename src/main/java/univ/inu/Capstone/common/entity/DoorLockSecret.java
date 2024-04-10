@@ -35,4 +35,9 @@ public class DoorLockSecret extends BaseEntity {
         this.dlSecretNo = newSecretNo;
         this.user = User.builder().userSeq(userSeq).build();
     }
+
+    public void changePwUnknownUser(String newSecretNo){
+        this.dlSecretNo = newSecretNo;
+        this.user = null;
+    }
 }

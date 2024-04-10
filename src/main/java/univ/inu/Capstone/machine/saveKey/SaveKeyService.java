@@ -94,7 +94,7 @@ public class SaveKeyService {
 
         // 3. 2에서 없을 경우, 등록
         DoorLockSecret update = doorLockSecret.get();
-        update.changePw(dto.getSecretNo(), null);
+        update.changePwUnknownUser(dto.getSecretNo());
 
         return ApiResponse.SUCCESS("비밀번호가 변경되었습니다.");
     }
