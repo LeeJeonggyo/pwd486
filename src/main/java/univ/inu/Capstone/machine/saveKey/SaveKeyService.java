@@ -27,11 +27,11 @@ public class SaveKeyService {
 
     /**
      * 카드키 등록
-     * @param dto SaveKeyRequestDto.saveCardKey
+     * @param dto SaveKeyRequestDto.saveKeyCard
      * @return ApiResponse<?>
      */
     @Transactional
-    public ApiResponse<?> saveCardKey(SaveKeyRequestDto.saveCardKey dto){
+    public ApiResponse<?> saveKeyCard(SaveKeyRequestDto.saveKeyCard dto){
         // 1. 도어락 확인
         Optional<DoorLock> doorLockOpt = doorLockRepository.findBySerialNo(dto.getSerialNo());
         if (doorLockOpt.isEmpty()) return ApiResponse.FAILURE(404, "요청한 도어락 정보를 찾을 수 없습니다.");
@@ -48,7 +48,7 @@ public class SaveKeyService {
                 .build();
         keyCardRepository.save(save);
 
-        return ApiResponse.SUCCESS("카드키 등록에 성공했습니다.");
+        return ApiResponse.SUCCESS("카드키 정보 등록에 성공했습니다.");
     }
 
     /**
@@ -56,7 +56,7 @@ public class SaveKeyService {
      * @param dto SaveKeyRequestDto.saveBioKey
      * @return ApiResponse<?>
      */
-    public ApiResponse<?> saveBioKey(SaveKeyRequestDto.saveBioKey dto){
+    public ApiResponse<?> saveKeyBio(SaveKeyRequestDto.saveKeyBio dto){
         // 1. 도어락 확인
         Optional<DoorLock> doorLockOpt = doorLockRepository.findBySerialNo(dto.getSerialNo());
         if (doorLockOpt.isEmpty()) return ApiResponse.FAILURE(404, "요청한 도어락 정보를 찾을 수 없습니다.");
@@ -73,7 +73,7 @@ public class SaveKeyService {
                 .build();
         keyBioRepository.save(save);
 
-        return ApiResponse.SUCCESS("지문 등록에 성공했습니다.");
+        return ApiResponse.SUCCESS("지문 정보 등록에 성공했습니다.");
     }
 
     /**
@@ -100,10 +100,10 @@ public class SaveKeyService {
 
     /**
      * 카드키 삭제
-     * @param dto SaveKeyRequestDto.delCardKey
+     * @param dto SaveKeyRequestDto.delKeyCard
      * @return ApiResponse<?>
      */
-    public ApiResponse<?> delCardKey(SaveKeyRequestDto.delCardKey dto){
+    public ApiResponse<?> delKeyCard(SaveKeyRequestDto.delKeyCard dto){
         // 1. 도어락 확인
         Optional<DoorLock> doorLockOpt = doorLockRepository.findBySerialNo(dto.getSerialNo());
         if (doorLockOpt.isEmpty()) return ApiResponse.FAILURE(404, "요청한 도어락 정보를 찾을 수 없습니다.");
@@ -116,6 +116,27 @@ public class SaveKeyService {
         // 3. 2에서 있을 경우, 삭제
         keyCardRepository.delete(keyCard.get());
 
-        return ApiResponse.SUCCESS("카드키가 삭제 되었습니다.");
+        return ApiResponse.SUCCESS("카드키 정보가 삭제 되었습니다.");
+    }
+
+    /**
+     * 지문 정보 삭제
+     * @param dto SaveKeyRequestDto.delKeyCard
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> delKeyBio(SaveKeyRequestDto.delKeyBio dto){
+        // 1. 도어락 확인
+        Optional<DoorLock> doorLockOpt = doorLockRepository.findBySerialNo(dto.getSerialNo());
+        if (doorLockOpt.isEmpty()) return ApiResponse.FAILURE(404, "요청한 도어락 정보를 찾을 수 없습니다.");
+        DoorLock doorLock = doorLockOpt.get();
+
+        // 2. 해당 번호로 등록된 지문이 있는지 확인
+        Optional<KeyBio> keyBio = keyBioRepository.findByKeyBioDataAndDoorLock_DoorLockSeq(dto.getKeyBioData(), doorLock.getDoorLockSeq());
+        if (keyBio.isEmpty()) return ApiResponse.FAILURE(400, "존재하지 않는 카드키입니다.");
+
+        // 3. 2에서 있을 경우, 삭제
+        keyBioRepository.delete(keyBio.get());
+
+        return ApiResponse.SUCCESS("지문 정보가 삭제 되었습니다.");
     }
 }

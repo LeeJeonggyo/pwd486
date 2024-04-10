@@ -13,22 +13,22 @@ public class SaveKeyController {
 
     /**
      * 카드키 등록
-     * @param dto SaveKeyRequestDto.saveCardKey
+     * @param dto SaveKeyRequestDto.saveKeyCard
      * @return ResponseEntity<?>
      */
-    @PostMapping("/save/cardKey")
-    public ResponseEntity<?> saveCardKey(@RequestBody SaveKeyRequestDto.saveCardKey dto){
-        return ResponseEntity.ok().body(saveKeyService.saveCardKey(dto));
+    @PostMapping("/saveKey/card")
+    public ResponseEntity<?> saveKeyCard(@RequestBody SaveKeyRequestDto.saveKeyCard dto){
+        return ResponseEntity.ok().body(saveKeyService.saveKeyCard(dto));
     }
 
     /**
      * 지문 등록
-     * @param dto SaveKeyRequestDto.saveBioKey
+     * @param dto SaveKeyRequestDto.saveKeyBio
      * @return ResponseEntity<?>
      */
-    @PostMapping("/save/bioKey")
-    public ResponseEntity<?> saveBioKey(@RequestBody SaveKeyRequestDto.saveBioKey dto){
-        return ResponseEntity.ok().body(saveKeyService.saveBioKey(dto));
+    @PostMapping("/saveKey/bio")
+    public ResponseEntity<?> saveKeyBio(@RequestBody SaveKeyRequestDto.saveKeyBio dto){
+        return ResponseEntity.ok().body(saveKeyService.saveKeyBio(dto));
     }
 
     /**
@@ -43,14 +43,21 @@ public class SaveKeyController {
 
     /**
      * 카드키 삭제
-     * @param dto SaveKeyRequestDto.delCardKey
+     * @param dto SaveKeyRequestDto.delKeyCard
      * @return ResponseEntity<?>
      */
-    @PostMapping("/del/cardKey")
-    public ResponseEntity<?> delCardKey(@RequestBody SaveKeyRequestDto.delCardKey dto){
-        return ResponseEntity.ok().body(saveKeyService.delCardKey(dto));
+    @PostMapping("/delKey/card")
+    public ResponseEntity<?> delKeyCard(@RequestBody SaveKeyRequestDto.delKeyCard dto){
+        return ResponseEntity.ok().body(saveKeyService.delKeyCard(dto));
     }
 
-    // 지문 삭제
-
+    /**
+     * 지문 정보 삭제
+     * @param dto SaveKeyRequestDto.delKeyBio
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/delKey/bio")
+    public ResponseEntity<?> delKeyBio(@RequestBody SaveKeyRequestDto.delKeyBio dto){
+        return ResponseEntity.ok().body(saveKeyService.delKeyBio(dto));
+    }
 }
