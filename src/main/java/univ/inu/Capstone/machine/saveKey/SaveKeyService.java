@@ -81,6 +81,7 @@ public class SaveKeyService {
      * @param dto SaveKeyRequestDto.changePwd
      * @return ApiResponse<?>
      */
+    @Transactional
     public ApiResponse<?> changePwd(SaveKeyRequestDto.changePwd dto){
         // 1. 도어락 확인
         Optional<DoorLock> doorLockOpt = doorLockRepository.findBySerialNo(dto.getSerialNo());
