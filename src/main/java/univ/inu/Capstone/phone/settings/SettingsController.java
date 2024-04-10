@@ -97,6 +97,18 @@ public class SettingsController {
     }
 
     /**
+     * 지문 삭제
+     * @param dto SettingsRequestDto.delKeyBio
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/delete/keyBio")
+    public ResponseEntity<?> delKeyBio(@RequestBody SettingsRequestDto.delKeyBio dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.delKeyBio(dto, userDetails.getUserSeq()));
+    }
+
+    /**
      * owner 권한 양도
      * @param dto SettingsRequestDto.tossOwnerAuth
      * @param authentication Authentication
