@@ -3,7 +3,6 @@ package univ.inu.Capstone.machine.saveKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.machine.saveKey.dto.SaveKeyRequestDto;
 
 @RestController
@@ -32,7 +31,15 @@ public class SaveKeyController {
         return ResponseEntity.ok().body(saveKeyService.saveBioKey(dto));
     }
 
-    // 비밀번호 변경
+    /**
+     * 비밀번호 변경
+     * @param dto SaveKeyRequestDto.changePwd
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/change/pwd")
+    public ResponseEntity<?> changePwd(@RequestBody SaveKeyRequestDto.changePwd dto){
+        return ResponseEntity.ok().body(saveKeyService.changePwd(dto));
+    }
 
     // 카드키 삭제
 

@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface DoorLockSecretRespository extends JpaRepository<DoorLockSecret, Long> {
     Optional<DoorLockSecret> findByDoorLock_DoorLockSeqAndDlSecretNo(Long doorLockSeq, String dlSecretNo);
+    Optional<DoorLockSecret> findByDoorLock_DoorLockSeq(Long doorLockSeq);
 }

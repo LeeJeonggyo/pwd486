@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.entity.DoorLock;
+import univ.inu.Capstone.common.entity.DoorLockSecret;
 import univ.inu.Capstone.common.entity.KeyBio;
 import univ.inu.Capstone.common.entity.KeyCard;
 import univ.inu.Capstone.common.repository.DoorLockRepository;
+import univ.inu.Capstone.common.repository.DoorLockSecretRespository;
 import univ.inu.Capstone.common.repository.KeyBioRepository;
 import univ.inu.Capstone.common.repository.KeyCardRepository;
 import univ.inu.Capstone.machine.saveKey.dto.SaveKeyRequestDto;
@@ -21,6 +23,7 @@ public class SaveKeyService {
     private final DoorLockRepository doorLockRepository;
     private final KeyCardRepository keyCardRepository;
     private final KeyBioRepository keyBioRepository;
+    private final DoorLockSecretRespository doorLockSecretRespository;
 
     /**
      * 카드키 등록
@@ -69,6 +72,28 @@ public class SaveKeyService {
                 .doorLock(doorLock)
                 .build();
         keyBioRepository.save(save);
+
+        return ApiResponse.SUCCESS("지문 등록에 성공했습니다.");
+    }
+
+    /**
+     * 비밀번호 변경
+     * @param dto SaveKeyRequestDto.saveBioKey
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> changePwd(SaveKeyRequestDto.changePwd dto){
+        // 1. 도어락 확인
+        Optional<DoorLock> doorLockOpt = doorLockRepository.findBySerialNo(dto.getSerialNo());
+        if (doorLockOpt.isEmpty()) return ApiResponse.FAILURE(404, "요청한 도어락 정보를 찾을 수 없습니다.");
+        DoorLock doorLock = doorLockOpt.get();
+
+        // 2. 도어락의 비밀번호 entity 호출
+        Optional<DoorLockSecret> doorLockSecret = doorLockSecretRespository.findByDoorLock_DoorLockSeq(doorLock.getDoorLockSeq());
+        if (doorLockSecret.isEmpty()) return ApiResponse.FAILURE(404, "요청한 도어락의 pwd 정보를 찾을 수 없습니다.");
+
+        // 3. 2에서 없을 경우, 등록
+        DoorLockSecret update = doorLockSecret.get();
+        update.changePw(dto.getSecretNo(), null);
 
         return ApiResponse.SUCCESS("지문 등록에 성공했습니다.");
     }
