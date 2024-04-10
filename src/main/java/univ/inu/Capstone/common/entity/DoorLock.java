@@ -31,10 +31,10 @@ public class DoorLock extends BaseEntity {
     @OneToMany(mappedBy = "doorLock")
     private List<DoorLockInvite> doorLockInvite;
 
-    @OneToOne(mappedBy = "doorLock")
+    @OneToMany(mappedBy = "doorLock")
     private List<KeyCard> keyCard;
 
-    @OneToOne(mappedBy = "doorLock")
+    @OneToMany(mappedBy = "doorLock")
     private List<KeyBio> keyBio;
 }
 

@@ -18,7 +18,7 @@ public class KeyBio extends BaseEntity {
     private Long keyBioSeq;             // 구분자
     private String keyBioData;          // 등록된 카드키 번호
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="doorLockSeq")
     private DoorLock doorLock;  // 도어락 테이블 조인
 }

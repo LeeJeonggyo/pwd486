@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import univ.inu.Capstone.machine.saveKey.dto.SaveKeyRequestDto;
 
 @RestController
-@RequestMapping("/machine/pw486/saveKey")
+@RequestMapping("/machine/pw486/setting")
 @RequiredArgsConstructor
 public class SaveKeyController {
     private final SaveKeyService saveKeyService;
