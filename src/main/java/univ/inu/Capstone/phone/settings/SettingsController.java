@@ -27,10 +27,10 @@ public class SettingsController {
      * 도어락 비밀번호 변경
      * @param dto SettingsRequestDto.changePw
      * @param authentication Authentication
-     * @return SettingsResponseDto.changePw
+     * @return ResponseEntity<?>
      */
     @PostMapping("/pw/change")
-    public ResponseEntity<SettingsResponseDto.changePw> changePw(@RequestBody SettingsRequestDto.changePw dto, Authentication authentication){
+    public ResponseEntity<?> changePw(@RequestBody SettingsRequestDto.changePw dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.changePw(dto, userDetails.getUserSeq()));
     }
@@ -39,10 +39,10 @@ public class SettingsController {
      * 출입로그 조회
      * @param dto SettingsRequestDto.viewLog
      * @param authentication Authentication
-     * @return ResponseEntity<Map<String, Object>>
+     * @return ResponseEntity<?>
      */
     @PostMapping("/view/log")
-    public ResponseEntity<Map<String, Object>> viewLog(@RequestBody SettingsRequestDto.viewLog dto, Authentication authentication){
+    public ResponseEntity<?> viewLog(@RequestBody SettingsRequestDto.viewLog dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.viewLog(dto, userDetails.getUserSeq()));
     }
@@ -64,10 +64,10 @@ public class SettingsController {
      * member & guest 사용허가
      * @param dto SettingsRequestDto.usePermit
      * @param authentication Authentication
-     * @return ResponseEntity<SettingsResponseDto.usePermit>
+     * @return ResponseEntity<?>
      */
     @PostMapping("/use/permit")
-    public ResponseEntity<SettingsResponseDto.usePermit> usePermit(@RequestBody SettingsRequestDto.usePermit dto, Authentication authentication){
+    public ResponseEntity<?> usePermit(@RequestBody SettingsRequestDto.usePermit dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.usePermit(dto, userDetails.getUserSeq()));
     }
@@ -76,10 +76,10 @@ public class SettingsController {
      * member & guest 삭제
      * @param dto SettingsRequestDto.delNfcOther
      * @param authentication Authentication
-     * @return ResponseEntity<SettingsResponseDto.delNfcOther>
+     * @return ResponseEntity<?>
      */
     @PostMapping("/delete/nfc/other")
-    public ResponseEntity<SettingsResponseDto.delNfcOther> delNfcOther(@RequestBody SettingsRequestDto.delNfcOther dto, Authentication authentication){
+    public ResponseEntity<?> delNfcOther(@RequestBody SettingsRequestDto.delNfcOther dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.delNfcOther(dto, userDetails.getUserSeq()));
     }
@@ -112,10 +112,10 @@ public class SettingsController {
      * owner 권한 양도
      * @param dto SettingsRequestDto.tossOwnerAuth
      * @param authentication Authentication
-     * @return ResponseEntity<SettingsResponseDto.tossOwnerAuth>
+     * @return ResponseEntity<?>
      */
     @PostMapping("/toss/owner")
-    public ResponseEntity<SettingsResponseDto.tossOwnerAuth> tossOwnerAuth(@RequestBody SettingsRequestDto.tossOwnerAuth dto, Authentication authentication){
+    public ResponseEntity<?> tossOwnerAuth(@RequestBody SettingsRequestDto.tossOwnerAuth dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.tossOwnerAuth(dto, userDetails.getUserSeq()));
     }

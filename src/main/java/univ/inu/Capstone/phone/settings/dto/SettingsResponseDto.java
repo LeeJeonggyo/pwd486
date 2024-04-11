@@ -1,20 +1,11 @@
 package univ.inu.Capstone.phone.settings.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
-import univ.inu.Capstone.common.entity.OpenLog;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class SettingsResponseDto {
-    @Getter
-    @Builder
-    public static class changePw {
-        private String result;      // 변경 결과
-    }
-
     @Getter
     @Builder
     public static class viewLog {
@@ -69,26 +60,5 @@ public class SettingsResponseDto {
     public static class viewRegistKeyBio {
         private Long keyBioSeq;             // 구분자
         private String keyBioData;          // 등록된 지문 번호
-    }
-
-    @Getter
-    @Builder
-    public static class usePermit {
-        private int state;          // 결과 state
-        private String result;      // 결과 msg
-    }
-
-    @Getter
-    @Builder
-    public static class delNfcOther {
-        private int state;          // 결과 state
-        private String result;      // 결과 msg
-    }
-
-    @Getter
-    @Builder
-    public static class tossOwnerAuth {
-        private int state;          // 결과 state
-        private String result;      // 결과 msg
     }
 }

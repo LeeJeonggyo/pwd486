@@ -26,40 +26,40 @@ public class SettingsService {
      * 도어락 비밀번호 변경
      * @param dto SettingsRequestDto.changePw
      * @param userSeq Long
-     * @return SettingsResponseDto.changePw
+     * @return ApiResponse<?>
      */
     @Transactional
-    public SettingsResponseDto.changePw changePw (SettingsRequestDto.changePw dto, Long userSeq){
+    public ApiResponse<?> changePw (SettingsRequestDto.changePw dto, Long userSeq){
         // 1. 새 비밀번호와 확인 값이 같은지 확인
-        if(!dto.getNewSecretNo().equals(dto.getCheckSecretNo()))  throw new RuntimeException("새 비밀번호 입력이 잘못되었습니다.");
+        if(!dto.getNewSecretNo().equals(dto.getCheckSecretNo()))
+            return ApiResponse.FAILURE(400, "새 비밀번호 입력이 잘못되었습니다.");
 
         // 2. 변경하려는 도어락에 사용자가 owner권한으로 등록되어 있는지 확인
         Optional<RegistDoorLock> registDoorLock = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, dto.getDoorLockSeq());
-        if(registDoorLock.isEmpty() || registDoorLock.get().getRdlAuth() != 1) throw new RuntimeException("권한이 없습니다.");
+        if(registDoorLock.isEmpty() || registDoorLock.get().getRdlAuth() != 1)
+            return ApiResponse.FAILURE(401, "권한이 없습니다.");
 
         // 3. 해당 도어락의 비밀번호가 입력된 현재 비밀번호와 같은지 확인
         Optional<DoorLockSecret> doorLockSecret = doorLockSecretRespository.findByDoorLock_DoorLockSeqAndDlSecretNo(dto.getDoorLockSeq(), dto.getDlSecretNo());
-        if(doorLockSecret.isEmpty()) throw new RuntimeException("현재 비밀번호를 다시 입력해주십시오.");
+        if(doorLockSecret.isEmpty())
+            return ApiResponse.FAILURE(401, "현재 비밀번호를 다시 입력해주십시오.");
 
         // 4. 1~3까지 문제가 없다면, 새로운 비밀번호로 변경
         doorLockSecret.get().changePw(dto.getNewSecretNo(), userSeq);
 
-        return SettingsResponseDto.changePw.builder()
-                .result("SUCCESS")
-                .build();
+        return ApiResponse.SUCCESS("비밀번호가 변경되었습니다.");
     }
 
     /**
      * 출입로그 조회
      * @param dto SettingsRequestDto.viewLog
-     * @return Map<String, Object>
+     * @return ApiResponse<List<SettingsResponseDto.viewLog>>
      */
-    public Map<String, Object> viewLog(SettingsRequestDto.viewLog dto, Long userSeq){
-        Map<String, Object> result = new HashMap<>();
-
+    public ApiResponse<List<SettingsResponseDto.viewLog>> viewLog(SettingsRequestDto.viewLog dto, Long userSeq){
         // 1. 요청자가 해당 도어락의 owner 권한을 가진사람이 맞는지 확인
         Optional<RegistDoorLock> registDoorLock = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, dto.getDoorLockSeq());
-        if(registDoorLock.isEmpty() || registDoorLock.get().getRdlAuth() != 1) throw new RuntimeException("권한이 없습니다.");
+        if(registDoorLock.isEmpty() || registDoorLock.get().getRdlAuth() != 1)
+            return ApiResponse.ERROR(401, "권한이 없습니다.");
 
         // 2. 도어락 구분자를 사용해서 출입 로그 가져오기 & dto 변환
         List<OpenLog> openLogList = openLogRepository.findByDoorLock_DoorLockSeq(dto.getDoorLockSeq());
@@ -74,11 +74,7 @@ public class SettingsService {
             resultList.add(data);
         }
 
-        result.put("state", 201);
-        result.put("result", "SUCCESS");
-        result.put("data", resultList);
-
-        return result;
+        return ApiResponse.SUCCESS("SUCCESS", resultList);
     }
 
     /**
@@ -90,14 +86,17 @@ public class SettingsService {
     public ApiResponse<?> viewRegistKey(SettingsRequestDto.viewRegistKey dto, Long userSeq){
         // 1. rdlSeq 로 등록된 NFC 확인 (해당 정보 없으면 안됨.)
         Optional<RegistDoorLock> rdlOpt = registDoorLockRepository.findById(dto.getRdlSeq());
-        if (rdlOpt.isEmpty()) return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
+        if (rdlOpt.isEmpty())
+            return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
         RegistDoorLock registDoorLock = rdlOpt.get();
 
         // 2. 1에서 구한 userSeq 값이 로그인 userSeq 와 같은지 확인 (다르면 안됨.)
-        if (!userSeq.equals(registDoorLock.getUser().getUserSeq())) return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
+        if (!userSeq.equals(registDoorLock.getUser().getUserSeq()))
+            return ApiResponse.FAILURE(404,"잘못된 정보입니다.");
 
         // 3. owner 권한인지 확인
-        if (registDoorLock.getRdlAuth() != 1) return ApiResponse.FAILURE(401,"조회 권한이 없습니다.");
+        if (registDoorLock.getRdlAuth() != 1)
+            return ApiResponse.FAILURE(401,"조회 권한이 없습니다.");
 
         // 4. NFC 정보
         List<RegistDoorLock> rdlList = registDoorLockRepository.findByDoorLock_DoorLockSeq(registDoorLock.getDoorLock().getDoorLockSeq());
@@ -144,71 +143,53 @@ public class SettingsService {
      * member & guest 사용허가
      * @param dto SettingsRequestDto.usePermit
      * @param userSeq Long
-     * @return SettingsResponseDto.usePermit
+     * @return ApiResponse<?>
      */
     @Transactional
-    public SettingsResponseDto.usePermit usePermit(SettingsRequestDto.usePermit dto, Long userSeq){
+    public ApiResponse<?> usePermit(SettingsRequestDto.usePermit dto, Long userSeq){
         // 1. 사용을 허가하려는 rdlSeq값 확인
         Optional<RegistDoorLock> permitEntity = registDoorLockRepository.findById(dto.getRdlSeq());
         if (permitEntity.isEmpty()
                 || permitEntity.get().getRdlApprove() == 1)
-            return SettingsResponseDto.usePermit.builder()
-                    .state(404)
-                    .result("피승인자의 정보가 올바르지 않습니다.")
-                    .build();
+            return ApiResponse.FAILURE(404, "피승인자의 정보가 올바르지 않습니다.");
 
         // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
         Optional<RegistDoorLock> userEntity = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, permitEntity.get().getDoorLock().getDoorLockSeq());
         if (userEntity.isEmpty()
                 || userEntity.get().getRdlAuth() != 1)
-            return SettingsResponseDto.usePermit.builder()
-                    .state(404)
-                    .result("승인 요청자의 정보가 올바르지 않습니다.")
-                    .build();
+            return ApiResponse.FAILURE(401, "승인 요청자의 정보가 올바르지 않습니다.");
 
         // 3. owner 권한이 맞을 경우, 사용 허가처리
         RegistDoorLock entity = permitEntity.get();
         entity.permit();
 
-        return SettingsResponseDto.usePermit.builder()
-                .state(201)
-                .result("SUCCESS")
-                .build();
+        return ApiResponse.SUCCESS("SUCCESS");
     }
 
     /**
      * member & guest 삭제
      * @param dto SettingsRequestDto.delNfcOther
      * @param userSeq Long
-     * @return SettingsResponseDto.delNfcOther
+     * @return ApiResponse<?>
      */
     @Transactional
-    public SettingsResponseDto.delNfcOther delNfcOther(SettingsRequestDto.delNfcOther dto, Long userSeq){
+    public ApiResponse<?> delNfcOther(SettingsRequestDto.delNfcOther dto, Long userSeq){
         // 1. 삭제하려는 rdlSeq값 확인
         Optional<RegistDoorLock> permitEntity = registDoorLockRepository.findById(dto.getRdlSeq());
         if (permitEntity.isEmpty())
-            return SettingsResponseDto.delNfcOther.builder()
-                    .state(404)
-                    .result("피승인자의 정보가 올바르지 않습니다.")
-                    .build();
+            return ApiResponse.FAILURE(404, "피승인자의 정보가 올바르지 않습니다.");
 
         // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
         Optional<RegistDoorLock> userEntity = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, permitEntity.get().getDoorLock().getDoorLockSeq());
         if (userEntity.isEmpty()
                 || userEntity.get().getRdlAuth() != 1)
-            return SettingsResponseDto.delNfcOther.builder()
-                    .state(404)
-                    .result("승인 요청자의 정보가 올바르지 않습니다.")
-                    .build();
+            return ApiResponse.FAILURE(401, "승인 요청자의 정보가 올바르지 않습니다.");
 
         // 3. owner 권한이 맞을 경우, 삭제 처리
         RegistDoorLock entity = permitEntity.get();
         registDoorLockRepository.delete(entity);
 
-        return SettingsResponseDto.delNfcOther.builder()
-                .state(201)
-                .result("SUCCESS")
-                .build();
+        return ApiResponse.SUCCESS("SUCCESS");
     }
 
     /**
@@ -228,7 +209,7 @@ public class SettingsService {
         Optional<RegistDoorLock> userEntity = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, permitEntity.get().getDoorLock().getDoorLockSeq());
         if (userEntity.isEmpty()
                 || userEntity.get().getRdlAuth() != 1)
-            return ApiResponse.FAILURE(404, "삭제 요청자의 정보가 올바르지 않습니다.");
+            return ApiResponse.FAILURE(401, "삭제 요청자의 정보가 올바르지 않습니다.");
 
         // 3. owner 권한이 맞을 경우, 라즈베리와 통신해서 도어락기기에서 정보 삭제 요청
 
@@ -256,7 +237,7 @@ public class SettingsService {
         Optional<RegistDoorLock> userEntity = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, permitEntity.get().getDoorLock().getDoorLockSeq());
         if (userEntity.isEmpty()
                 || userEntity.get().getRdlAuth() != 1)
-            return ApiResponse.FAILURE(404, "삭제 요청자의 정보가 올바르지 않습니다.");
+            return ApiResponse.FAILURE(401, "삭제 요청자의 정보가 올바르지 않습니다.");
 
         // 3. owner 권한이 맞을 경우, 라즈베리와 통신해서 도어락기기에서 정보 삭제 요청
 
@@ -271,27 +252,21 @@ public class SettingsService {
      * owner 권한 양도
      * @param dto SettingsRequestDto.tossOwnerAuth
      * @param userSeq Long
-     * @return SettingsResponseDto.tossOwnerAuth
+     * @return ApiResponse<?>
      */
     @Transactional
-    public SettingsResponseDto.tossOwnerAuth tossOwnerAuth(SettingsRequestDto.tossOwnerAuth dto, Long userSeq){
+    public ApiResponse<?> tossOwnerAuth(SettingsRequestDto.tossOwnerAuth dto, Long userSeq){
         // 1. 양도받는 사용자 rdlSeq값 확인
         Optional<RegistDoorLock> otherOpt = registDoorLockRepository.findById(dto.getRdlSeq());
         if (otherOpt.isEmpty()
                 || otherOpt.get().getRdlApprove() == 0)
-            return SettingsResponseDto.tossOwnerAuth.builder()
-                    .state(404)
-                    .result("피승인자의 정보가 올바르지 않습니다.")
-                    .build();
+            return ApiResponse.FAILURE(404, "피승인자의 정보가 올바르지 않습니다.");
 
         // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
         Optional<RegistDoorLock> userOpt = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, otherOpt.get().getDoorLock().getDoorLockSeq());
         if (userOpt.isEmpty()
                 || userOpt.get().getRdlAuth() != 1)
-            return SettingsResponseDto.tossOwnerAuth.builder()
-                    .state(404)
-                    .result("승인 요청자의 정보가 올바르지 않습니다.")
-                    .build();
+            return ApiResponse.FAILURE(401, "승인 요청자의 정보가 올바르지 않습니다.");
 
         // 3. owner 권한 양도
         RegistDoorLock otherEntity = otherOpt.get();
@@ -300,10 +275,7 @@ public class SettingsService {
         userEntity.changeAuth(otherEntity.getRdlAuth());
         otherEntity.changeAuth(1);
 
-        return SettingsResponseDto.tossOwnerAuth.builder()
-                .state(201)
-                .result("SUCCESS")
-                .build();
+        return ApiResponse.SUCCESS("SUCCESS");
     }
 
 }
