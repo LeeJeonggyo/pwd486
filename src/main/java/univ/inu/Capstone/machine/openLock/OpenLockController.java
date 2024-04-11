@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import univ.inu.Capstone.machine.openLock.dto.OpenLockRequestDto;
-import univ.inu.Capstone.machine.openLock.dto.OpenLockResponseDto;
 
 @RestController
 @RequestMapping("/machine/pw486/openLock")
@@ -19,10 +18,10 @@ public class OpenLockController {
     /**
      * NFC 를 사용하여 도어락 해제
      * @param dto OpenLockRequestDto.openLockByNfc
-     * @return OpenLockResponseDto.openLockByNfc
+     * @return ResponseEntity<?>
      */
     @PostMapping("/nfc")
-    public ResponseEntity<OpenLockResponseDto.openLockByNfc> openLockByNfc(@RequestBody OpenLockRequestDto.openLockByNfc dto){
+    public ResponseEntity<?> openLockByNfc(@RequestBody OpenLockRequestDto.openLockByNfc dto){
         return ResponseEntity.ok().body(openLockService.openLockByNfc(dto));
     }
 }
