@@ -5,12 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import univ.inu.Capstone.common.dto.doorlock.DoorLockRequestDto;
-import univ.inu.Capstone.common.dto.doorlock.DoorLockResponseDto;
-import univ.inu.Capstone.common.dto.registDoorlock.RegistDLRequestDto;
-import univ.inu.Capstone.common.dto.registDoorlock.RegistDLResponseDto;
 import univ.inu.Capstone.common.utils.CustomUserDetails;
-import univ.inu.Capstone.phone.login.dto.LoginDto;
+import univ.inu.Capstone.phone.registDoorLock.dto.RegistDoorLockRequestDto;
 
 @Slf4j
 @RestController
@@ -22,55 +18,53 @@ public class RegistDoorLockController {
 
     /**
      * 도어락 기기 정보 등록
-     * @param dto DoorLockRequestDto.DoorLockBasic
-     * @return ResponseEntity<DoorLockResponseDto.DoorLockResult>
+     * @param dto RegistDoorLockRequestDto.registMachine
+     * @return ResponseEntity<?>
      */
     @PostMapping("/machine")
-    public ResponseEntity<DoorLockResponseDto.SaveMachine> registMachine(@RequestBody DoorLockRequestDto.DoorLockBasic dto){
-        DoorLockResponseDto.SaveMachine result = registDoorLockService.registMachine(dto);
-        return ResponseEntity.ok().body(result);
+    public ResponseEntity<?> registMachine(@RequestBody RegistDoorLockRequestDto.registMachine dto){
+        return ResponseEntity.ok().body(registDoorLockService.registMachine(dto));
     }
 
     /**
      * 시리얼 넘버를 통한 도어락 검색
      * @param serialNo String
-     * @return ResponseEntity<DoorLockResponseDto.SearchSerialNo>
+     * @return ResponseEntity<?>
      */
     @GetMapping("/{serialNo}/search")
-    public ResponseEntity<DoorLockResponseDto.SearchSerialNo> searchSerialNo(@PathVariable("serialNo") String serialNo){
-        DoorLockResponseDto.SearchSerialNo result = registDoorLockService.searchSerialNo(serialNo);
-        return ResponseEntity.ok().body(result);
+    public ResponseEntity<?> searchSerialNo(@PathVariable("serialNo") String serialNo){
+        return ResponseEntity.ok().body(registDoorLockService.searchSerialNo(serialNo));
     }
 
     /**
      * 사용자 도어락 NFC 등록 (owner)
-     * @param dto RegistDLRequestDto.RegistDL
+     * @param dto RegistDoorLockRequestDto.registNfc
      * @param authentication Authentication
-     * @return ResponseEntity<DoorLockResponseDto.DoorLockResult>
+     * @return ResponseEntity<?>
      */
     @PostMapping("/registNfc")
-    public ResponseEntity<RegistDLResponseDto.RegistDL> registNfc(@RequestBody RegistDLRequestDto.RegistDL dto, Authentication authentication){
+    public ResponseEntity<?> registNfc(@RequestBody RegistDoorLockRequestDto.registNfc dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok().body(registDoorLockService.registDL(dto, userDetails.getUserSeq()));
+        return ResponseEntity.ok().body(registDoorLockService.registNfc(dto, userDetails.getUserSeq()));
     }
 
     /**
      * member, guest 초대 코드 생성
-     * @param dto RegistDLRequestDto.inviteCode
-     * @return ResponseEntity<RegistDLResponseDto.inviteCode>
+     * @param dto RegistDoorLockRequestDto.inviteCode
+     * @return ResponseEntity<?>
      */
     @PostMapping("/inviteCode")
-    public ResponseEntity<RegistDLResponseDto.inviteCode> inviteCode(@RequestBody RegistDLRequestDto.inviteCode dto){
+    public ResponseEntity<?> inviteCode(@RequestBody RegistDoorLockRequestDto.inviteCode dto){
         return ResponseEntity.ok().body(registDoorLockService.inviteCode(dto));
     }
 
     /**
      * 초대 코드 조회
      * @param inviteCode String
-     * @return ResponseEntity<RegistDLResponseDto.searchInviteCode>
+     * @return ResponseEntity<?>
      */
     @GetMapping("/inviteCode/{inviteCode}/search")
-    public ResponseEntity<RegistDLResponseDto.searchInviteCode> searchInviteCode(@PathVariable("inviteCode") String inviteCode){
+    public ResponseEntity<?> searchInviteCode(@PathVariable("inviteCode") String inviteCode){
         return ResponseEntity.ok().body(registDoorLockService.searchInviteCode(inviteCode));
     }
 
@@ -78,10 +72,10 @@ public class RegistDoorLockController {
      * owner 권한 이외, NFC 등록 API
      * @param dto RegistDLRequestDto.registNfcOther
      * @param authentication Authentication
-     * @return ResponseEntity<RegistDLResponseDto.registNfcOther>
+     * @return ResponseEntity<?>
      */
     @PostMapping("/registNfcOther")
-    public ResponseEntity<RegistDLResponseDto.registNfcOther> registNfcOther(@RequestBody RegistDLRequestDto.registNfcOther dto, Authentication authentication){
+    public ResponseEntity<?> registNfcOther(@RequestBody RegistDoorLockRequestDto.registNfcOther dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(registDoorLockService.registNfcOther(dto, userDetails.getUserSeq()));
     }

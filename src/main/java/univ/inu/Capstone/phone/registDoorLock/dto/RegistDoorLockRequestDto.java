@@ -1,12 +1,21 @@
-package univ.inu.Capstone.common.dto.registDoorlock;
-
+package univ.inu.Capstone.phone.registDoorLock.dto;
 
 import lombok.Data;
+import univ.inu.Capstone.common.entity.DoorLock;
 
 @Data
-public class RegistDLRequestDto {
+public class RegistDoorLockRequestDto {
     @Data
-    public static class RegistDL {
+    public static class registMachine {
+        private String serialNo;    // 시리얼넘버
+        public DoorLock toEntity(){
+            return DoorLock.builder()
+                    .serialNo(this.serialNo)
+                    .build();
+        }
+    }
+    @Data
+    public static class registNfc {
         private String rdlName;     // 카드키 이름
         private Long doorLockSeq;   // 도어락 구분자
     }
