@@ -70,7 +70,7 @@ public class RegistDoorLockController {
 
     /**
      * owner 권한 이외, NFC 등록 API
-     * @param dto RegistDLRequestDto.registNfcOther
+     * @param dto RegistDoorLockRequestDto.registNfcOther
      * @param authentication Authentication
      * @return ResponseEntity<?>
      */

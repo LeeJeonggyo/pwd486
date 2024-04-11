@@ -112,8 +112,8 @@ public class RegistDoorLockService {
 
     /**
      * member, guest 초대 코드 생성
-     * @param dto RegistDLRequestDto.inviteCode
-     * @return RegistDLResponseDto.inviteCode
+     * @param dto RegistDoorLockRequestDto.inviteCode
+     * @return ApiResponse<RegistDoorLockResponseDto.inviteCode>
      */
     public ApiResponse<RegistDoorLockResponseDto.inviteCode> inviteCode(RegistDoorLockRequestDto.inviteCode dto){
         // 1. 해당 사용자가 해당 도어락의 OWNER 권한을 가진자가 맞는지 확인 (맞아야 함.)
@@ -177,7 +177,7 @@ public class RegistDoorLockService {
     /**
      * 초대 코드 조회
      * @param inviteCode String
-     * @return RegistDLResponseDto.searchInviteCode
+     * @return ApiResponse<RegistDoorLockResponseDto.searchInviteCode>
      */
     @Transactional
     public ApiResponse<RegistDoorLockResponseDto.searchInviteCode> searchInviteCode(String inviteCode){
@@ -194,9 +194,9 @@ public class RegistDoorLockService {
 
     /**
      * owner 권한 이외, NFC 등록 API
-     * @param dto RegistDLRequestDto.registNfcOther
+     * @param dto RegistDoorLockRequestDto.registNfcOther
      * @param userSeq Long
-     * @return RegistDLResponseDto.registNfcOther
+     * @return ApiResponse<RegistDoorLockResponseDto.registNfcOther>
      */
     @Transactional
     public ApiResponse<RegistDoorLockResponseDto.registNfcOther> registNfcOther(RegistDoorLockRequestDto.registNfcOther dto, Long userSeq){
