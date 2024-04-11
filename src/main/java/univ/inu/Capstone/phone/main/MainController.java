@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import univ.inu.Capstone.common.utils.CustomUserDetails;
 import univ.inu.Capstone.phone.main.dto.MainRequestDto;
-import univ.inu.Capstone.phone.main.dto.MainResponseDto;
 
 @RestController
 @RequestMapping("/api/pw486/main")
@@ -21,10 +20,10 @@ public class MainController {
     /**
      * owner 권한 이외, 등록된 NFC 삭제 API
      * @param dto MainRequestDto.delNfcOther
-     * @return ResponseEntity<MainResponseDto.delNfcOther>
+     * @return ResponseEntity<?>
      */
     @PostMapping("/delNfcOther")
-    public ResponseEntity<MainResponseDto.delNfcOther> delNfcOther(@RequestBody MainRequestDto.delNfcOther dto, Authentication authentication){
+    public ResponseEntity<?> delNfcOther(@RequestBody MainRequestDto.delNfcOther dto, Authentication authentication){
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(mainService.delNfcOther(dto, userDetails.getUserSeq()));
     }
