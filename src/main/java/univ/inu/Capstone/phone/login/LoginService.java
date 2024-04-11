@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.dto.user.UserDto;
 import univ.inu.Capstone.common.entity.User;
 import univ.inu.Capstone.common.repository.UserRepository;
@@ -33,10 +34,10 @@ public class LoginService {
     /**
      * 카카오 로그인 (최초)
      * @param dto LoginDto
-     * @return TokenDto.responseDto
+     * @return ApiResponse<TokenDto.responseDto>
      */
     @Transactional
-    public TokenDto.responseDto firstLogin(LoginDto dto){
+    public ApiResponse<TokenDto.responseDto> firstLogin(LoginDto dto){
         // 1. kakaoId로 중복 체크 진행
         Optional<User> user = userRepository.findByKakaoId(dto.getKakaoId());
 
@@ -64,12 +65,13 @@ public class LoginService {
         String refreshToken = JwtUtil.createRefreshToken(userDto, refreshTokenKey, refreshExpireTimeMs);
         login.updateRefreshToken(refreshToken);
 
-        // TokenDto에 데이터 담아서 전달
-        return TokenDto.responseDto.builder()
-                .nickname(userDto.getNickname())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        // TokenDto 데이터 담아서 전달
+        return ApiResponse.SUCCESS("SUCCESS : JWT 발급",
+                TokenDto.responseDto.builder()
+                        .nickname(userDto.getNickname())
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build());
     }
 
     /**
@@ -78,7 +80,7 @@ public class LoginService {
      * @return TokenDto.responseDto
      */
     @Transactional
-    public TokenDto.responseDto refreshLogin(HttpServletRequest request){
+    public ApiResponse<TokenDto.responseDto> refreshLogin(HttpServletRequest request){
 
         // http header로 부터 refresh token 추출
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -86,7 +88,7 @@ public class LoginService {
         // 제대로된 형식으로 들어왔는지 체크
         if (authorization == null || !authorization.startsWith("Bearer")){
             log.error("잘못된 authorization 입니다.");
-            return null;
+            return ApiResponse.ERROR(401, "잘못된 authorization 입니다.");
         }
 
         // refresh token 추출
@@ -95,7 +97,7 @@ public class LoginService {
         // refresh token Expired 여부 확인
         if(JwtUtil.isExpired(refreshToken, refreshTokenKey)){
             log.error("Token이 만료되었습니다.");
-            return null;
+            return ApiResponse.FAILURE(401, "Token이 만료되었습니다.");
         }
 
         // DB에 저장된 refresh token 인지 확인
@@ -112,10 +114,11 @@ public class LoginService {
         checkUserEntity.updateRefreshToken(reRefreshToken);
 
         // TokenDto에 데이터 담아서 전달
-        return TokenDto.responseDto.builder()
-                .nickname(userDto.getNickname())
-                .accessToken(reAccessToken)
-                .refreshToken(reRefreshToken)
-                .build();
+        return ApiResponse.SUCCESS("SUCCESS : JWT 재발급",
+                TokenDto.responseDto.builder()
+                    .nickname(userDto.getNickname())
+                    .accessToken(reAccessToken)
+                    .refreshToken(reRefreshToken)
+                    .build());
     }
 }

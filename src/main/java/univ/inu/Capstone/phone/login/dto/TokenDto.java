@@ -17,7 +17,6 @@ public class TokenDto {
     @Builder
     @Getter
     public static class accessLogin{
-        private String result;
         private String nickname;
     }
 }
