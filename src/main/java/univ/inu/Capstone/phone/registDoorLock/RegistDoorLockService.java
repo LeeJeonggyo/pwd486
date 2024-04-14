@@ -60,7 +60,7 @@ public class RegistDoorLockService {
         // 시리얼 넘버로 등록된 도어락 정보 확인
         Optional<DoorLock> data = doorLockRepository.findBySerialNo(serialNo);
         return data.map(
-                doorLock -> ApiResponse.SUCCESS("잘못된 시리얼번호입니다.",
+                doorLock -> ApiResponse.SUCCESS("도어락이 조회되었습니다.",
                         RegistDoorLockResponseDto.searchSerialNo.builder()
                                 .doorLockSeq(doorLock.getDoorLockSeq())
                                 .build()))
