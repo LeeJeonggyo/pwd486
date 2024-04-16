@@ -12,7 +12,7 @@ public class SaveKeyRequestDto {
     @Data
     public static class saveKeyBio{
         private String serialNo;    // 도어락 시리얼넘버
-        private String keyBioData;  // 등록된 지문 번호
+        private int keyBioData;     // 등록된 지문 번호
     }
     @Data
     public static class changePwd{
@@ -27,6 +27,6 @@ public class SaveKeyRequestDto {
     @Data
     public static class delKeyBio{
         private String serialNo;    // 도어락 시리얼넘버
-        private String keyBioData; // 등록된 카드키 번호
+        private int keyBioData;     // 등록된 카드키 번호
     }
 }

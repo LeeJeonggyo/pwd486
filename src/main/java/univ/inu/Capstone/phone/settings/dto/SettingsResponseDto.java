@@ -59,6 +59,6 @@ public class SettingsResponseDto {
     @Builder
     public static class viewRegistKeyBio {
         private Long keyBioSeq;             // 구분자
-        private String keyBioData;          // 등록된 지문 번호
+        private int keyBioData;          // 등록된 지문 번호
     }
 }

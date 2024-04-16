@@ -133,7 +133,7 @@ public class SaveKeyService {
 
         // 2. 해당 번호로 등록된 지문이 있는지 확인
         Optional<KeyBio> keyBio = keyBioRepository.findByKeyBioDataAndDoorLock_DoorLockSeq(dto.getKeyBioData(), doorLock.getDoorLockSeq());
-        if (keyBio.isEmpty()) return ApiResponse.FAILURE(400, "존재하지 않는 카드키입니다.");
+        if (keyBio.isEmpty()) return ApiResponse.FAILURE(400, "존재하지 않는 지문정보입니다.");
 
         // 3. 2에서 있을 경우, 삭제
         keyBioRepository.delete(keyBio.get());

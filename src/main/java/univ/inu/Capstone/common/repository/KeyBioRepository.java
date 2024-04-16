@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface KeyBioRepository extends JpaRepository<KeyBio, Long> {
 
-    Optional<KeyBio> findByKeyBioDataAndDoorLock_DoorLockSeq(String keyBioData, Long doorLockSeq);
+    Optional<KeyBio> findByKeyBioDataAndDoorLock_DoorLockSeq(int keyBioData, Long doorLockSeq);
     List<KeyBio> findByDoorLock_DoorLockSeq(Long doorLockSeq);
 }
