@@ -19,10 +19,8 @@ public class SettingsResponseDto {
             if (openMethod == 1L)
                 this.openMethod = "password";
             else if (openMethod == 2L)
-                this.openMethod = "NFC";
+                this.openMethod = "TAG(NFC or RFID)";
             else if (openMethod == 3L)
-                this.openMethod = "keyCard";
-            else if (openMethod == 4L)
                 this.openMethod = "fingerprint";
             else
                 this.openMethod = "정의 할수 없는 출입";

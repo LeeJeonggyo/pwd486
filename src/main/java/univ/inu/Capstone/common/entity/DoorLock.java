@@ -44,9 +44,15 @@ public class DoorLock extends BaseEntity {
      * update
      * ================================================================= */
     // 비밀번호 해제 결과에 따른 카운트 값 초기화
-    public void openFailSecretNo(int success){
+    public void openSecretNo(int success){
         if (success == 1) this.failCntSecretNo = 0;
         else this.failCntSecretNo += 1;
+    }
+
+    // 태그 해제 결과에 따른 카운트 값 초기화
+    public void openTag(int success){
+        if (success == 1) this.failCntTag = 0;
+        else this.failCntTag += 1;
     }
 }
 

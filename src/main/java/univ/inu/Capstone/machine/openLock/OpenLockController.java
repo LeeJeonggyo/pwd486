@@ -37,6 +37,6 @@ public class OpenLockController {
 
     // 지문 해제
 
-    // 비콘 해제
+    // 태그리스 해제
 
 }

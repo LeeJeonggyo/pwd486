@@ -17,7 +17,7 @@ public class OpenLog extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long openLogSeq;    // 구분자
     private int openYn;         // 해제 여부(0:fail / 1:success)
-    private Long openMethod;    // 해제 방법 구분자(1: 비밀번호 / 2: NFC / 3: 카드키 / 4: 지문)
+    private Long openMethod;    // 해제 방법 구분자(1: 비밀번호 / 2: TAG(NFC or RFID) / 3: 지문)
     private String nickname;    // 해제 당사자 이름
 
 

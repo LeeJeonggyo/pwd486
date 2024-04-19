@@ -12,7 +12,7 @@ public class OpenLockRequestDto {
 
     @Data
     public static class openByRfidAndNfc{
-        private Long rdlSeq;        // NFC 구분자
-        private String serialNo;    // 도어락 시리얼 넘버
+        private String serialNo;        // 도어락 시리얼 넘버
+        private String keyCardData;     // RFID & NFC 데이터
     }
 }
