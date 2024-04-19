@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface RegistDoorLockRepository extends JpaRepository<RegistDoorLock, Long> {
     Optional<RegistDoorLock> findByUser_UserSeqAndDoorLock_DoorLockSeq(Long userSeq, Long doorLockSeq);
     List<RegistDoorLock> findByDoorLock_DoorLockSeq(Long doorLockSeq);
+    List<RegistDoorLock> findByRdlAuthAndDoorLock_DoorLockSeq(int rdlAuth, Long doorLockSeq);
 }

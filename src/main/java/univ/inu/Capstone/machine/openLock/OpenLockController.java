@@ -16,12 +16,27 @@ public class OpenLockController {
     private final OpenLockService openLockService;
 
     /**
-     * NFC 를 사용하여 도어락 해제
-     * @param dto OpenLockRequestDto.openLockByNfc
+     * 비밀번호 해제
+     * @param dto OpenLockRequestDto.openBySecretNo
      * @return ResponseEntity<?>
      */
-    @PostMapping("/nfc")
-    public ResponseEntity<?> openLockByNfc(@RequestBody OpenLockRequestDto.openLockByNfc dto){
-        return ResponseEntity.ok().body(openLockService.openLockByNfc(dto));
+    @PostMapping("/secretNo")
+    public ResponseEntity<?> openBySecretNo(@RequestBody OpenLockRequestDto.openBySecretNo dto){
+        return ResponseEntity.ok().body(openLockService.openBySecretNo(dto));
     }
+
+    /**
+     * RFID & NFC 해제
+     * @param dto OpenLockRequestDto.openByRfidAndNfc
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/rfidAndNfc")
+    public ResponseEntity<?> openByRfidAndNfc(@RequestBody OpenLockRequestDto.openByRfidAndNfc dto){
+        return ResponseEntity.ok().body(openLockService.openByRfidAndNfc(dto));
+    }
+
+    // 지문 해제
+
+    // 비콘 해제
+
 }

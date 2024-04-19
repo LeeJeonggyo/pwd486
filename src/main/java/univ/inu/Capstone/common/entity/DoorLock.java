@@ -18,6 +18,9 @@ public class DoorLock extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long doorLockSeq;   // 구분자
     private String serialNo;    // 시리얼넘버
+    private int failCntSecretNo;    // 비밀번호 틀린 횟수 (최대 5회)
+    private int failCntTag;         // rfid & nfc 태그 틀린 횟수 (최대 5회)
+    private int failCntBio;         // 지문 틀린 횟수 (최대 5회)
 
     @OneToMany(mappedBy = "doorLock")
     private List<RegistDoorLock> registDoorLock;
@@ -36,5 +39,14 @@ public class DoorLock extends BaseEntity {
 
     @OneToMany(mappedBy = "doorLock")
     private List<KeyBio> keyBio;
+
+    /* =================================================================
+     * update
+     * ================================================================= */
+    // 비밀번호 해제 결과에 따른 카운트 값 초기화
+    public void openFailSecretNo(int success){
+        if (success == 1) this.failCntSecretNo = 0;
+        else this.failCntSecretNo += 1;
+    }
 }
 
