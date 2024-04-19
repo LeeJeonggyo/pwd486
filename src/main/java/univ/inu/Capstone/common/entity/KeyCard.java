@@ -16,6 +16,7 @@ public class KeyCard extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long keyCardSeq;            // 구분자
+    private String keyCardName;         // 카드키 별명
     private String keyCardData;         // 등록된 카드키 번호
 
     @ManyToOne

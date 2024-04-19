@@ -43,6 +43,7 @@ public class SaveKeyService {
 
         // 3. 2에서 없을 경우, 등록
         KeyCard save = KeyCard.builder()
+                .keyCardName("카드키")
                 .keyCardData(dto.getKeyCardData())
                 .doorLock(doorLock)
                 .build();
