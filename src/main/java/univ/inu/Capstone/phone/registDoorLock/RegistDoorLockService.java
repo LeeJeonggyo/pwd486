@@ -81,9 +81,10 @@ public class RegistDoorLockService {
             return ApiResponse.ERROR(401, "알 수 없는 사용자입니다.");
 
         // 2. 넘어온 도어락 구분자값으로 등록된 도어락 정보가 있는지 확인
-        Optional<DoorLock> doorLock = doorLockRepository.findById(dto.getDoorLockSeq());
-        if (doorLock.isEmpty())
+        Optional<DoorLock> doorLockOpt = doorLockRepository.findById(dto.getDoorLockSeq());
+        if (doorLockOpt.isEmpty())
             return ApiResponse.ERROR(404, "알 수 없는 도어락입니다.");
+        DoorLock doorLock = doorLockOpt.get();
 
         // 3. 넘어온 도어락 구분자값으로 등록된 사용자가 있는지 확인 (사용자가 없어야함.)
         List<RegistDoorLock> data = registDoorLockRepository.findByDoorLock_DoorLockSeq(dto.getDoorLockSeq());
@@ -92,11 +93,15 @@ public class RegistDoorLockService {
         if (!data.isEmpty())
             return ApiResponse.FAILURE(401, "OWNER 로 이미 등록된 사용자가 있습니다.");
 
+        // 5. nfcData 생성
+        String nfcData = makeNfcData(doorLock.getDoorLockSeq());
+
         // 5. 사용자가 없을 경우, OWNER 권한
         RegistDoorLock registDoorLock = RegistDoorLock.builder()
                 .user(user.get())
-                .doorLock(doorLock.get())
+                .doorLock(doorLock)
                 .rdlName(dto.getRdlName())
+                .nfcData(nfcData)
                 .rdlAuth(1)
                 .rdlApprove(1)
                 .build();
@@ -206,9 +211,10 @@ public class RegistDoorLockService {
             return ApiResponse.ERROR(401, "알 수 없는 사용자입니다.");
 
         // 2. 넘어온 도어락 구분자값으로 등록된 도어락 정보가 있는지 확인
-        Optional<DoorLock> doorLock = doorLockRepository.findById(dto.getDoorLockSeq());
-        if (doorLock.isEmpty())
+        Optional<DoorLock> doorLockOpt = doorLockRepository.findById(dto.getDoorLockSeq());
+        if (doorLockOpt.isEmpty())
             return ApiResponse.ERROR(404, "알 수 없는 도어락입니다.");
+        DoorLock doorLock = doorLockOpt.get();
 
         // 3. 초대 코드 조회를 통해 부여할 권한 확인
         LocalDateTime expireTime = LocalDateTime.now().minusMinutes(5);
@@ -226,17 +232,21 @@ public class RegistDoorLockService {
         if(registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, dto.getDoorLockSeq()).isPresent())
             return ApiResponse.ERROR(401, "이미 등록된 사용자입니다.");
 
-        // 6. 초대 코드에 맞는 권한으로 NFC 데이터 저장
+        // 6. nfcData 생성
+        String nfcData = makeNfcData(doorLock.getDoorLockSeq());
+
+        // 7. 초대 코드에 맞는 권한으로 NFC 데이터 저장
         RegistDoorLock registDoorLock = RegistDoorLock.builder()
                 .user(user.get())
-                .doorLock(doorLock.get())
+                .doorLock(doorLock)
                 .rdlName(dto.getRdlName())
+                .nfcData(nfcData)
                 .rdlAuth(inviteCodeEntity.getRdlAuth())
                 .rdlApprove(0)
                 .build();
         registDoorLockRepository.save(registDoorLock);
 
-        // 7. 초대코드 사용처리
+        // 8. 초대코드 사용처리
         inviteCodeEntity.usingCode();
 
         return ApiResponse.SUCCESS("등록되었습니다.",
@@ -244,5 +254,36 @@ public class RegistDoorLockService {
                         .serialNo(registDoorLock.getDoorLock().getSerialNo())
                         .rdlName(registDoorLock.getRdlName())
                         .build());
+    }
+
+    /**
+     * nfcData 생성
+     * @return String
+     */
+    private String makeNfcData(Long doorLockSeq){
+        String nfcData = randomNfcData();
+        Optional<RegistDoorLock> nfcDataEntity = registDoorLockRepository.findByNfcDataAndDoorLock_DoorLockSeq(nfcData, doorLockSeq);
+        while(nfcDataEntity.isPresent()){
+            nfcData = randomNfcData();
+            nfcDataEntity = registDoorLockRepository.findByNfcDataAndDoorLock_DoorLockSeq(nfcData, doorLockSeq);
+        }
+        return nfcData;
+    }
+
+    /**
+     * nfcData 랜덤 값 생성
+     * @return String
+     */
+    private String randomNfcData() {
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        int length = 11;
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            if( i % 3 == 2) sb.append(" ");
+            int index = random.nextInt(characters.length());
+            sb.append(characters.charAt(index));
+        }
+        return sb.toString();
     }
 }

@@ -16,7 +16,8 @@ public class RegistDoorLock extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rdlSeq;    // 구분자
-    private String rdlName; // 카드키 이름
+    private String rdlName; // 이름
+    private String nfcData; // NFC 데이터
     private int rdlAuth;    // 권한 (1:OWNER / 2:MEMBER / 3:GUEST)
     private int rdlApprove; // 승인여부 (0: 미승인 / 1: 승인) - OWNER 권한은 무조건 1
 
