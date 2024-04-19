@@ -9,20 +9,19 @@ public class SettingsResponseDto {
     @Getter
     @Builder
     public static class viewLog {
+        private int openYn;             // 해제 여부
         private String openMethod;      // 해제 방법
-        private String nickname;        // 사용자 이름 
+        private String nickname;        // 사용자 이름
         private String inpDate;         // 출입 날짜
         private String inpTime;         // 출입 시간
 
         public void setOpenMethod(Long openMethod) {
-            if (openMethod == 0L)
-                this.openMethod = "해제 실패";
-            else if (openMethod == 1L)
+            if (openMethod == 1L)
                 this.openMethod = "password";
             else if (openMethod == 2L)
-                this.openMethod = "password";
+                this.openMethod = "NFC";
             else if (openMethod == 3L)
-                this.openMethod = "cardKey";
+                this.openMethod = "keyCard";
             else if (openMethod == 4L)
                 this.openMethod = "fingerprint";
             else

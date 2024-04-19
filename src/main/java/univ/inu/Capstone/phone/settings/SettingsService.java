@@ -66,11 +66,12 @@ public class SettingsService {
         List<SettingsResponseDto.viewLog> resultList = new ArrayList<>();
         for (OpenLog entity : openLogList) {
             SettingsResponseDto.viewLog data = SettingsResponseDto.viewLog.builder()
+                    .openYn(entity.getOpenYn())
                     .nickname(entity.getNickname())
                     .inpDate(entity.getInpDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                     .inpTime(entity.getInpDate().format(DateTimeFormatter.ofPattern("HH시 mm분 ss.SSS초")))
                     .build();
-            data.setOpenMethod(entity.getOpenMethod());
+            data.setOpenMethod(entity.getOpenMethod()); // 오픈 방식
             resultList.add(data);
         }
 
