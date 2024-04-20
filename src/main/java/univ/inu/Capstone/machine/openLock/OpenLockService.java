@@ -166,11 +166,11 @@ public class OpenLockService {
      * @return ApiResponse<?>
      */
     public ApiResponse<?> openByTagless(OpenLockRequestDto.openByTagless dto) {
-        // 1. btSerial을 사용해서 도어락 조회 (없으면 안됨.)
-        Optional<DoorLock> doorLockOpt = doorLockRepository.findByBtSerial(dto.getBtSerial());
+        // 1. btSerialNo을 사용해서 도어락 조회 (없으면 안됨.)
+        Optional<DoorLock> doorLockOpt = doorLockRepository.findByBtSerialNo(dto.getBtSerialNo());
         if (doorLockOpt.isEmpty()) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
 
-        // 2. kakaoId를 사용해서 사용자 조회(if: JWT 토큰 확인으로 Authentication으로 확인 할 수 있다면 그렇게 변경할 것.)
+        // 2. kakaoId를 사용해서 사용자 조회(if: JWT 토큰 확인으로 Authentication 으로 확인 할 수 있다면 그렇게 변경할 것.)
         Optional<User> userOpt = userRepository.findByKakaoId(dto.getKakaoId());
         if (userOpt.isEmpty()) return ApiResponse.ERROR(404, "등록되지 않은 사용자입니다.");
 

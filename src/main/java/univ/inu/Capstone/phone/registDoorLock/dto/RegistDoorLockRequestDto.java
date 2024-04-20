@@ -8,9 +8,11 @@ public class RegistDoorLockRequestDto {
     @Data
     public static class registMachine {
         private String serialNo;    // 시리얼넘버
+        private String btSerialNo;   // 비콘 시리얼 넘버
         public DoorLock toEntity(){
             return DoorLock.builder()
                     .serialNo(this.serialNo)
+                    .btSerialNo(this.btSerialNo)
                     .build();
         }
     }

@@ -18,6 +18,7 @@ public class DoorLock extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long doorLockSeq;   // 구분자
     private String serialNo;    // 시리얼넘버
+    private String btSerialNo;   // 비콘 시리얼 넘버
     private int failCntSecretNo;    // 비밀번호 틀린 횟수 (최대 5회)
     private int failCntTag;         // rfid & nfc 태그 틀린 횟수 (최대 5회)
 

@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface DoorLockRepository extends JpaRepository<DoorLock, Long> {
     Optional<DoorLock> findBySerialNo(String serialNo);
-    Optional<DoorLock> findByBtSerial(String btSerial);
+    Optional<DoorLock> findByBtSerialNo(String btSerialNo);
 
 }

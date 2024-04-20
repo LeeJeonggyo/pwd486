@@ -22,7 +22,7 @@ public class OpenLockRequestDto {
     }
     @Data
     public static class openByTagless{
-        private String btSerial;    // 도어락 비콘 시리얼 넘버
+        private String btSerialNo;    // 도어락 비콘 시리얼 넘버
         private String kakaoId;     // 등록된 사용자 id
     }
 }
