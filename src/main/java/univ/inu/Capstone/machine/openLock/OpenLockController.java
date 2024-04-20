@@ -45,6 +45,14 @@ public class OpenLockController {
         return ResponseEntity.ok().body(openLockService.openByFingerPrint(dto));
     }
 
-    // 태그리스 해제
+    /**
+     * 태그리스 해제
+     * @param dto OpenLockRequestDto.openByTagless
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/tagless")
+    public ResponseEntity<?> openByTagless(@RequestBody OpenLockRequestDto.openByTagless dto){
+        return ResponseEntity.ok().body(openLockService.openByTagless(dto));
+    }
 
 }

@@ -24,6 +24,7 @@ public class OpenLockService {
     private final OpenLogRepository openLogRepository;
     private final KeyCardRepository keyCardRepository;
     private final KeyBioRepository keyBioRepository;
+    private final UserRepository userRepository;
 
     /**
      * 비밀번호 해제
@@ -159,8 +160,39 @@ public class OpenLockService {
         }
     }
 
+    /**
+     * 태그리스 해제
+     * @param dto OpenLockRequestDto.openByTagless
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> openByTagless(OpenLockRequestDto.openByTagless dto) {
+        // 1. btSerial을 사용해서 도어락 조회 (없으면 안됨.)
+        Optional<DoorLock> doorLockOpt = doorLockRepository.findByBtSerial(dto.getBtSerial());
+        if (doorLockOpt.isEmpty()) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
 
-    // 태그리스 해제
+        // 2. kakaoId를 사용해서 사용자 조회(if: JWT 토큰 확인으로 Authentication으로 확인 할 수 있다면 그렇게 변경할 것.)
+        Optional<User> userOpt = userRepository.findByKakaoId(dto.getKakaoId());
+        if (userOpt.isEmpty()) return ApiResponse.ERROR(404, "등록되지 않은 사용자입니다.");
+
+        // 3. owner 권한 확인
+        DoorLock doorLock = doorLockOpt.get();
+        User user = userOpt.get();
+        Optional<RegistDoorLock> registDoorLockOpt
+                = registDoorLockRepository.findByRdlAuthAndDoorLock_DoorLockSeqAndUser_UserSeq(1, doorLock.getDoorLockSeq(), user.getUserSeq());
+        if (registDoorLockOpt.isEmpty()) return ApiResponse.ERROR(401, "태그리스 접근 권한이 없습니다.");
+        String rdlName = registDoorLockOpt.get().getRdlName();
+
+        // 4. 도어락으로 open 신호 보내기
+
+        // 5. 알림전송
+        sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", rdlName+"님께서 태그리스 기능을 사용하셨습니다.");
+
+        // 6. 로그기록
+        saveOpenLog(1, 4L, doorLock, rdlName);
+
+        // 7. return
+        return ApiResponse.SUCCESS("인증되었습니다.");
+    }
 
 
     /* =====================================================================================================

@@ -22,6 +22,8 @@ public class SettingsResponseDto {
                 this.openMethod = "TAG(NFC or RFID)";
             else if (openMethod == 3L)
                 this.openMethod = "fingerprint";
+            else if (openMethod == 4L)
+                this.openMethod = "Tagless";
             else
                 this.openMethod = "정의 할수 없는 출입";
         }

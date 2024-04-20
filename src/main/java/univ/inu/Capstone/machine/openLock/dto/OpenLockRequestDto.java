@@ -20,4 +20,9 @@ public class OpenLockRequestDto {
         private int keyBioData;     // 등록된 지문 번호
         private int openYn;         // 해제 여부(0:fail / 1:success)
     }
+    @Data
+    public static class openByTagless{
+        private String btSerial;    // 도어락 비콘 시리얼 넘버
+        private String kakaoId;     // 등록된 사용자 id
+    }
 }
