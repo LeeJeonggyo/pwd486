@@ -20,7 +20,6 @@ public class DoorLock extends BaseEntity {
     private String serialNo;    // 시리얼넘버
     private int failCntSecretNo;    // 비밀번호 틀린 횟수 (최대 5회)
     private int failCntTag;         // rfid & nfc 태그 틀린 횟수 (최대 5회)
-    private int failCntBio;         // 지문 틀린 횟수 (최대 5회)
 
     @OneToMany(mappedBy = "doorLock")
     private List<RegistDoorLock> registDoorLock;

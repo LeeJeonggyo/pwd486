@@ -35,7 +35,15 @@ public class OpenLockController {
         return ResponseEntity.ok().body(openLockService.openByRfidAndNfc(dto));
     }
 
-    // 지문 해제
+    /**
+     * 지문 해제 : 디바이스에서 인증 후 결과 값만 전송
+     * @param dto OpenLockRequestDto.openByFingerPrint
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/fingerPrint")
+    public ResponseEntity<?> openByFingerPrint(@RequestBody OpenLockRequestDto.openByFingerPrint dto){
+        return ResponseEntity.ok().body(openLockService.openByFingerPrint(dto));
+    }
 
     // 태그리스 해제
 

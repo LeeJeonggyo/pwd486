@@ -16,7 +16,8 @@ public class OpenLockRequestDto {
     }
     @Data
     public static class openByFingerPrint{
-        private String serialNo;        // 도어락 시리얼 넘버
-        private int keyBioData;         // 등록된 지문 번호
+        private String serialNo;    // 도어락 시리얼 넘버
+        private int keyBioData;     // 등록된 지문 번호
+        private int openYn;         // 해제 여부(0:fail / 1:success)
     }
 }

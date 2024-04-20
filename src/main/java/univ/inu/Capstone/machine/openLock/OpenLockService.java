@@ -23,6 +23,7 @@ public class OpenLockService {
     private final RegistDoorLockRepository registDoorLockRepository;
     private final OpenLogRepository openLogRepository;
     private final KeyCardRepository keyCardRepository;
+    private final KeyBioRepository keyBioRepository;
 
     /**
      * 비밀번호 해제
@@ -122,7 +123,42 @@ public class OpenLockService {
         }
     }
 
-    // 지문 해제
+    /**
+     * 지문 해제 : 디바이스에서 인증 후 결과 값만 전송
+     * @param dto OpenLockRequestDto.openByFingerPrint
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> openByFingerPrint(OpenLockRequestDto.openByFingerPrint dto) {
+        // 1. serialNo를 사용해서 도어락 조회 (없으면 안됨.)
+        DoorLock doorLock = findDoorLock(dto.getSerialNo());
+        if (doorLock == null) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
+
+        // 2. 비밀번호 해제 결과에 대한 핸드폰 알림 전송
+        if (dto.getOpenYn() == 1) { // 2-1. 해제 성공
+            // 2-1-1. 지문 번호 조회
+            Optional<KeyBio> keyBioOpt = keyBioRepository.findByKeyBioDataAndDoorLock_DoorLockSeq(dto.getKeyBioData(), doorLock.getDoorLockSeq());
+            if (keyBioOpt.isEmpty()) { // 이미 문은 열린 상태이므로 SUCCESS 상태로 알림 전송 및 로그 기록
+                sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", "알수 없는 지문이 사용되었습니다.");
+                saveOpenLog(1, 3L, doorLock, "???");
+                return ApiResponse.ERROR(401, "등록되지 않은 지문정보입니다.");
+            }
+            // 2-1-2. 지문 해제 성공 알림 전송
+            String keyBioName = keyBioOpt.get().getKeyBioName();
+            sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", keyBioName+" 지문이 사용되었습니다.");
+            // 2-1-3. 지문 해제 로그 생성
+            saveOpenLog(1, 3L, doorLock, keyBioName);
+            // 2-1-4. return
+            return ApiResponse.SUCCESS("로그등록이 완료되었습니다.");
+        } else { // 2-2. 해제 실패
+            // 2-1-1. 지문 해제 실패 알림 전송
+            sendNotification(doorLock.getDoorLockSeq(), "[FAIL] 문 열림 실패", "알수 없는 지문이 사용되었습니다.");
+            // 2-1-2. 지문 해제 실패 로그 생성
+            saveOpenLog(0, 3L, doorLock, "???");
+            // 2-1-3. return
+            return ApiResponse.SUCCESS("로그등록이 완료되었습니다.");
+        }
+    }
+
 
     // 태그리스 해제
 
