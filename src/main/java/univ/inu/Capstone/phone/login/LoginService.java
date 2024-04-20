@@ -47,6 +47,7 @@ public class LoginService {
         else {
             User newUser = User.builder()
                     .kakaoId(dto.getKakaoId())
+                    .fcmToken(dto.getFcmToken())
                     .nickname(dto.getNickname())
                     .email(dto.getEmail())
                     .build();

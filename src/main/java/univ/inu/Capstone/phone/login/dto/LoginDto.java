@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class LoginDto {
     private String kakaoId;     // 카카오 로그인시 발급되는 id
+    private String fcmToken;    // fcmToken : 파이어베이스에 저장한 해당 디바이스의 FCM 토큰 값
     private String nickname;    // 카카오 로그인 이름
     private String email;       // 카카오 로그인 이메일
 }
