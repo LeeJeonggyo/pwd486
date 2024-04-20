@@ -69,6 +69,7 @@ public class SaveKeyService {
 
         // 3. 2에서 없을 경우, 등록
         KeyBio save = KeyBio.builder()
+                .keyBioName("지문 "+dto.getKeyBioData())
                 .keyBioData(dto.getKeyBioData())
                 .doorLock(doorLock)
                 .build();

@@ -9,10 +9,14 @@ public class OpenLockRequestDto {
         private String serialNo;    // 도어락 구분을 위한 시리얼 번호
         private String secretNo;    // 입력된 비밀번호
     }
-
     @Data
     public static class openByRfidAndNfc{
         private String serialNo;        // 도어락 시리얼 넘버
         private String keyCardData;     // RFID & NFC 데이터
+    }
+    @Data
+    public static class openByFingerPrint{
+        private String serialNo;        // 도어락 시리얼 넘버
+        private int keyBioData;         // 등록된 지문 번호
     }
 }

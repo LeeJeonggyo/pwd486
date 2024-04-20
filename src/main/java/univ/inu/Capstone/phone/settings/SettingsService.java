@@ -117,6 +117,7 @@ public class SettingsService {
         for (KeyCard entity : keyCardList) {
             keyCardListDto.add(SettingsResponseDto.viewRegistKeyCard.builder()
                     .keyCardSeq(entity.getKeyCardSeq())
+                    .keyCardName(entity.getKeyCardName())
                     .keyCardData(entity.getKeyCardData())
                     .build());
         }
@@ -127,6 +128,7 @@ public class SettingsService {
         for (KeyBio entity : keyBioList) {
             keyBioListDto.add(SettingsResponseDto.viewRegistKeyBio.builder()
                     .keyBioSeq(entity.getKeyBioSeq())
+                    .keyBioName(entity.getKeyBioName())
                     .keyBioData(entity.getKeyBioData())
                     .build());
         }
