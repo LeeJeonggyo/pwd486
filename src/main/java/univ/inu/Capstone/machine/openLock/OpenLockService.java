@@ -219,9 +219,10 @@ public class OpenLockService {
         // 1. 해당 도어락 owner (rdlAuth = 1) 찾기
         List<RegistDoorLock> registDoorLockOpt
                 = registDoorLockRepository.findByRdlAuthAndDoorLock_DoorLockSeq(1, doorLockSeq);
-        if (registDoorLockOpt.size() != 1) throw new RuntimeException("owner 권한을 가진 사용자가 없거나 2명이상입니다.");
+        // 2. owner 권한을 가진 사용자가 없거나 2명이상인 경우, 알림 없이 진행
+        if (registDoorLockOpt.size() != 1) return;
 
-        // 2. fcmToken 가져오기
+        // 3. fcmToken 가져오기
         String fcmToken = registDoorLockOpt.get(0).getUser().getFcmToken();
 
         log.info("=========================================================================================");

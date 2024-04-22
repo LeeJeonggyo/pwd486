@@ -281,8 +281,10 @@ public class RegistDoorLockService {
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             if( i % 3 == 2) sb.append(" ");
-            int index = random.nextInt(characters.length());
-            sb.append(characters.charAt(index));
+            else {
+                int index = random.nextInt(characters.length());
+                sb.append(characters.charAt(index));
+            }
         }
         return sb.toString();
     }

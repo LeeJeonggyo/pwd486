@@ -17,6 +17,7 @@ public class KeyCard extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long keyCardSeq;            // 구분자
     private String keyCardName;         // 카드키 별명
+    @Column(columnDefinition = "VARCHAR(11) BINARY NOT NULL")
     private String keyCardData;         // 등록된 카드키 번호
 
     @ManyToOne
