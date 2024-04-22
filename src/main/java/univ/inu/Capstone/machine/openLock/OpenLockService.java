@@ -222,7 +222,7 @@ public class OpenLockService {
         if (registDoorLockOpt.size() != 1) throw new RuntimeException("owner 권한을 가진 사용자가 없거나 2명이상입니다.");
 
         // 2. fcmToken 가져오기
-        String fcmToken = registDoorLockOpt.get(0).getUser().getRefreshToken();
+        String fcmToken = registDoorLockOpt.get(0).getUser().getFcmToken();
 
         log.info("=========================================================================================");
         log.info("fcmToken : {}", fcmToken);    // fcmToken : 파이어베이스에 저장한 해당 디바이스의 FCM 토큰 값)
