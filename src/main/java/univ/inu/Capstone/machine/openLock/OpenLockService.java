@@ -70,6 +70,7 @@ public class OpenLockService {
      * @param dto OpenLockRequestDto.openByRfidAndNfc
      * @return ApiResponse<?>
      */
+    @Transactional
     public ApiResponse<?> openByRfidAndNfc(OpenLockRequestDto.openByRfidAndNfc dto) {
         // 1. serialNo를 사용해서 도어락 조회 (없으면 안됨.)
         DoorLock doorLock = findDoorLock(dto.getSerialNo());
@@ -89,11 +90,13 @@ public class OpenLockService {
             RegistDoorLock nfcEntity = nfcOpt.get();
             // 4-1-1. 틀린 횟수 0으로 초기화
             doorLock.openTag(1);
-            // 4-1-2. 비밀번호 해제 성공 알림 전송
+            // 4-1-2. owner 권한이 nfc를 사용하여 출입한 경우, 비밀번호 틀린 횟수도 0으로 초기화한다.
+            if(nfcEntity.getRdlAuth() == 1) doorLock.openSecretNo(1);
+            // 4-1-3. 비밀번호 해제 성공 알림 전송
             sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", nfcEntity.getRdlName()+"님께서 문을 열었습니다.");
-            // 4-1-3. 비밀번호 해제 로그 생성
+            // 4-1-4. 비밀번호 해제 로그 생성
             saveOpenLog(1, 2L, doorLock, nfcEntity.getRdlName()+"(핸드폰)");
-            // 4-1-4. return
+            // 4-1-5. return
             return ApiResponse.SUCCESS("인증되었습니다.");
         }
 
