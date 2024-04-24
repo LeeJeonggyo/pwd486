@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.entity.*;
 import univ.inu.Capstone.common.repository.*;
+import univ.inu.Capstone.common.notification.NotificationService;
 import univ.inu.Capstone.machine.openLock.dto.OpenLockRequestDto;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class OpenLockService {
 
+    private final NotificationService notificationService;
     private final DoorLockRepository doorLockRepository;
     private final DoorLockSecretRespository doorLockSecretRespository;
     private final RegistDoorLockRepository registDoorLockRepository;
@@ -32,7 +34,7 @@ public class OpenLockService {
      * @return ApiResponse<?>
      */
     @Transactional
-    public ApiResponse<?> openBySecretNo(OpenLockRequestDto.openBySecretNo dto){
+    public ApiResponse<?> openBySecretNo(OpenLockRequestDto.openBySecretNo dto) {
         // 1. serialNo를 사용해서 도어락 조회 (없으면 안됨.)
         DoorLock doorLock = findDoorLock(dto.getSerialNo());
         if (doorLock == null) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
@@ -228,11 +230,8 @@ public class OpenLockService {
         // 3. fcmToken 가져오기
         String fcmToken = registDoorLockOpt.get(0).getUser().getFcmToken();
 
-        log.info("=========================================================================================");
-        log.info("fcmToken : {}", fcmToken);    // fcmToken : 파이어베이스에 저장한 해당 디바이스의 FCM 토큰 값)
-        log.info("title : {}", title);          // title : 알림 제목
-        log.info("message : {}", message);      // message : 알림으로 전달하려는 메시지
-        log.info("=========================================================================================");
+        // 4. 알림 전송
+        notificationService.sendNotification(fcmToken, title, message);
     }
 
     /**

@@ -21,7 +21,7 @@ public class OpenLockController {
      * @return ResponseEntity<?>
      */
     @PostMapping("/secretNo")
-    public ResponseEntity<?> openBySecretNo(@RequestBody OpenLockRequestDto.openBySecretNo dto){
+    public ResponseEntity<?> openBySecretNo(@RequestBody OpenLockRequestDto.openBySecretNo dto) {
         return ResponseEntity.ok().body(openLockService.openBySecretNo(dto));
     }
 
@@ -31,7 +31,7 @@ public class OpenLockController {
      * @return ResponseEntity<?>
      */
     @PostMapping("/rfidAndNfc")
-    public ResponseEntity<?> openByRfidAndNfc(@RequestBody OpenLockRequestDto.openByRfidAndNfc dto){
+    public ResponseEntity<?> openByRfidAndNfc(@RequestBody OpenLockRequestDto.openByRfidAndNfc dto) {
         return ResponseEntity.ok().body(openLockService.openByRfidAndNfc(dto));
     }
 
@@ -41,7 +41,7 @@ public class OpenLockController {
      * @return ResponseEntity<?>
      */
     @PostMapping("/fingerPrint")
-    public ResponseEntity<?> openByFingerPrint(@RequestBody OpenLockRequestDto.openByFingerPrint dto){
+    public ResponseEntity<?> openByFingerPrint(@RequestBody OpenLockRequestDto.openByFingerPrint dto) {
         return ResponseEntity.ok().body(openLockService.openByFingerPrint(dto));
     }
 
@@ -51,7 +51,7 @@ public class OpenLockController {
      * @return ResponseEntity<?>
      */
     @PostMapping("/tagless")
-    public ResponseEntity<?> openByTagless(@RequestBody OpenLockRequestDto.openByTagless dto){
+    public ResponseEntity<?> openByTagless(@RequestBody OpenLockRequestDto.openByTagless dto) {
         return ResponseEntity.ok().body(openLockService.openByTagless(dto));
     }
 
