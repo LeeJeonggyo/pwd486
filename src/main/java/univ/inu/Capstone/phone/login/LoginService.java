@@ -28,8 +28,8 @@ public class LoginService {
     private String accessTokenKey;
     @Value("${jwt.secret.REFRESH_TOKEN_KEY}")
     private String refreshTokenKey;
-    private Long accessExpireTimeMs = 1000*60*5L; // 5분
-    private Long refreshExpireTimeMs = 1000*60*10L; // 10분
+    private Long accessExpireTimeMs = 1000*60*10L; // 10분
+    private Long refreshExpireTimeMs = 1000*60*60*24*30L; // 30일
 
     /**
      * 카카오 로그인 (최초)
