@@ -275,7 +275,7 @@ public class RegistDoorLockService {
      * @return String
      */
     private String randomNfcData() {
-        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        String characters = "ABCDEF1234567890";
         int length = 11;
         Random random = new Random();
         StringBuilder sb = new StringBuilder(length);
