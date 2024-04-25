@@ -16,8 +16,9 @@ import java.io.IOException;
 @Slf4j
 @Configuration
 public class FirebaseConfig {
-    @Value("${firebase.credentials}")
-    private String credentials;
+    // 운영
+//    @Value("${firebase.credentials}")
+//    private String credentials;
     @PostConstruct
     public void initialize() {
         try {

@@ -1,5 +1,7 @@
 package univ.inu.Capstone.common.configuration;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +37,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 특정 url 필터링 제외
         if ("/pw486/user/firstLogin".equals(request.getRequestURI())
-                || "/pw486/user/refreshLogin".equals(request.getRequestURI())) {
+                || "/pw486/user/refreshLogin".equals(request.getRequestURI())
+                || request.getRequestURI().startsWith("/machine/pw486")) {
             log.info("필터링에서 제외합니다.");
             filterChain.doFilter(request, response);
             return;
@@ -46,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorization == null || !authorization.startsWith("Bearer")){
             log.error("잘못된 authorization 입니다.");
-            filterChain.doFilter(request, response);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "잘못된 authorization 입니다."); // 401 오류 응답 보내기
             return;
         }
 
@@ -54,9 +57,18 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authorization.split(" ")[1];
 
         // 토큰 Expired 여부 확인
-        if(JwtUtil.isExpired(token, secretKey)){
-            log.error("Token이 만료되었습니다.");
-            filterChain.doFilter(request, response);
+        try {
+            if (JwtUtil.isExpired(token, secretKey)) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
+                return;
+            }
+        } catch (ExpiredJwtException e) {
+            log.error("ExpiredJwtException occurred: {}", e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
+            return;
+        } catch (SignatureException e) {
+            log.error("SignatureException occurred: {}", e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
             return;
         }
 
