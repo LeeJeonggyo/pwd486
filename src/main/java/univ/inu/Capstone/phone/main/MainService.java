@@ -6,14 +6,34 @@ import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.entity.RegistDoorLock;
 import univ.inu.Capstone.common.repository.RegistDoorLockRepository;
 import univ.inu.Capstone.phone.main.dto.MainRequestDto;
+import univ.inu.Capstone.phone.main.dto.MainResponseDto;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MainService {
 
     private final RegistDoorLockRepository registDoorLockRepository;
+
+    /**
+     * 사용자별 등록된 nfc 데이터 리스트 출력
+     * @param userSeq Long 사용자 구분자
+     * @return ApiResponse<List<MainResponseDto.getMyNfcList>>
+     */
+    public ApiResponse<?> getMyNfcList(Long userSeq){
+        // 1. 사용자로 등록된 NFC 조회
+        List<RegistDoorLock> nfcEntityList = registDoorLockRepository.findByUser_UserSeq(userSeq);
+
+        // 2. dto 전환
+        List<MainResponseDto.getMyNfcList> nfcList = nfcEntityList.stream()
+                .map(MainResponseDto.getMyNfcList::new)
+                .collect(Collectors.toList());
+
+        return ApiResponse.SUCCESS("조회되었습니다.", nfcList);
+    }
 
     /**
      * owner 권한 이외, 등록된 NFC 삭제 API
