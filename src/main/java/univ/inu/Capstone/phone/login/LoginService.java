@@ -1,5 +1,7 @@
 package univ.inu.Capstone.phone.login;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,16 +98,23 @@ public class LoginService {
         String refreshToken = authorization.split(" ")[1];
 
         // refresh token Expired 여부 확인
-        if(JwtUtil.isExpired(refreshToken, refreshTokenKey)){
-            log.error("Token이 만료되었습니다.");
-            return ApiResponse.FAILURE(401, "Token이 만료되었습니다.");
+        try {
+            if(JwtUtil.isExpired(refreshToken, refreshTokenKey)){
+                log.error("Token이 만료되었습니다.");
+                return ApiResponse.FAILURE(401, "Token이 만료되었습니다.");
+            }
+        } catch (ExpiredJwtException e) {
+            log.error("ExpiredJwtException occurred: {}", e.getMessage());
+            return ApiResponse.ERROR(401, "Token이 만료되었습니다.");
+        } catch (SignatureException e) {
+            log.error("SignatureException occurred: {}", e.getMessage());
+            return ApiResponse.ERROR(401, "토큰이 유효하지 않습니다.");
         }
 
         // DB에 저장된 refresh token 인지 확인
         Optional<User> checkUser = userRepository.findByRefreshToken(refreshToken);
-        User checkUserEntity = null;
-        if(checkUser.isEmpty()) return null;
-        else checkUserEntity = checkUser.get();
+        if(checkUser.isEmpty()) return ApiResponse.ERROR(401, "잘못된 refresh 토큰입니다.");
+        User checkUserEntity = checkUser.get();
 
 
         // refresh token에 저장된 데이터로 accessToken, refreshToken 재발급
