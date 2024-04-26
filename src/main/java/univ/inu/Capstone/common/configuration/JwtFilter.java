@@ -38,6 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 특정 url 필터링 제외
         if ("/pw486/user/firstLogin".equals(request.getRequestURI())
                 || "/pw486/user/refreshLogin".equals(request.getRequestURI())
+                || "/api/pw486/regist/machine".equals(request.getRequestURI())
                 || request.getRequestURI().startsWith("/machine/pw486")) {
             log.info("필터링에서 제외합니다.");
             filterChain.doFilter(request, response);
