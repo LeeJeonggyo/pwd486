@@ -94,11 +94,16 @@ public class OpenLockService {
             doorLock.openTag(1);
             // 4-1-2. owner 권한이 nfc를 사용하여 출입한 경우, 비밀번호 틀린 횟수도 0으로 초기화한다.
             if(nfcEntity.getRdlAuth() == 1) doorLock.openSecretNo(1);
-            // 4-1-3. 비밀번호 해제 성공 알림 전송
-            sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", nfcEntity.getRdlName()+"님께서 문을 열었습니다.");
-            // 4-1-4. 비밀번호 해제 로그 생성
-            saveOpenLog(1, 2L, doorLock, nfcEntity.getRdlName()+"(핸드폰)");
-            // 4-1-5. return
+
+            // 4-1-3. GUEST 권한은 알림 및 기록을 생성하지 않는다.
+            if(nfcEntity.getRdlAuth() != 3){
+                // 4-1-3-1. 비밀번호 해제 성공 알림 전송 (GUEST 권한은 알림 X)
+                sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", nfcEntity.getRdlName()+"님께서 문을 열었습니다.");
+                // 4-1-3-2. 비밀번호 해제 로그 생성 (GUEST 권한은 해제 로그 X)
+                saveOpenLog(1, 2L, doorLock, nfcEntity.getRdlName()+"(핸드폰)");
+            }
+
+            // 4-1-4. return
             return ApiResponse.SUCCESS("인증되었습니다.");
         }
 
