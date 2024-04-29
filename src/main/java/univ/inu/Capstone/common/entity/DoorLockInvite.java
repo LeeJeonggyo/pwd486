@@ -21,7 +21,7 @@ public class DoorLockInvite extends BaseEntity {
     private int rdlAuth;        // 권한 (2:MEMBER / 3:GUEST)
     private int useYn;          // 사용여부 (0: 미사용 / 1: 사용)
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="doorLockSeq")
     private DoorLock doorLock;  // 도어락 테이블 조인
 

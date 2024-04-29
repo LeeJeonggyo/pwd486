@@ -22,11 +22,21 @@ public class DoorLock extends BaseEntity {
     private int failCntSecretNo;    // 비밀번호 틀린 횟수 (최대 5회)
     private int failCntTag;         // rfid & nfc 태그 틀린 횟수 (최대 5회)
 
-    @OneToMany(mappedBy = "doorLock")
-    private List<RegistDoorLock> registDoorLock;
+    private int dataYn;     // 데이터 수집동의 여부
+    private int alarmYn;    // 귀가 알림 동의 여부
+    private int aiYn;       // AI 서비스 동의 여부
+
 
     @OneToOne(mappedBy = "doorLock")
     private DoorLockSecret doorLockSecret;
+
+    @OneToOne(mappedBy = "doorLock")
+    private TaglessTime taglessTime;
+
+
+
+    @OneToMany(mappedBy = "doorLock")
+    private List<RegistDoorLock> registDoorLock;
 
     @OneToMany(mappedBy = "doorLock")
     private List<OpenLog> openLog;

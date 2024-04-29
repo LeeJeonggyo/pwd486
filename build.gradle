@@ -26,6 +26,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5' // jwt
 
 	implementation 'com.google.firebase:firebase-admin:9.2.0'	// Firebase Admin SDK
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'		// batch
 
     compileOnly 'org.projectlombok:lombok'			    // lombok
     annotationProcessor 'org.projectlombok:lombok'	    // lombok
