@@ -324,4 +324,31 @@ public class SettingsService {
         }
     }
 
+    /**
+     * 토글-데이터 수집여부 update
+     * @param dto SettingsRequestDto.dataToggle
+     * @param userSeq Long
+     * @return ApiResponse<?>
+     */
+    @Transactional
+    public ApiResponse<?> dataToggle(SettingsRequestDto.dataToggle dto, Long userSeq){
+        // 1. rdlSeq의 유효성 검사
+        Optional<RegistDoorLock> rdlOpt = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (rdlOpt.isEmpty()
+                || (!userSeq.equals(rdlOpt.get().getUser().getUserSeq()))
+                || (rdlOpt.get().getRdlAuth() != 1))
+            return ApiResponse.FAILURE(401, "요청자의 정보가 올바르지 않습니다.");
+
+        // 2. 도어락 조회 및 데이터 수집 여부 조회
+        DoorLock doorLock = rdlOpt.get().getDoorLock();
+        if (doorLock == null)
+            return ApiResponse.FAILURE(404, "도어락 정보가 올바르지 않습니다.");
+
+        // 3. 저장된 값 반대로 데이터 변경
+        doorLock.changeDataYn();
+
+        // 4. 변경된 dataYn state 값 반환
+        return ApiResponse.SUCCESS("SUCCESS", doorLock.getDataYn());
+    }
+
 }

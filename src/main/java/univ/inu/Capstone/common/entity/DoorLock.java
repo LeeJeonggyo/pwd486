@@ -63,5 +63,10 @@ public class DoorLock extends BaseEntity {
         if (success == 1) this.failCntTag = 0;
         else this.failCntTag += 1;
     }
+
+    // 데이터 수집동의 여부 변경
+    public void changeDataYn(){
+        this.dataYn = this.dataYn == 0 ? 1 : 0;
+    }
 }
 

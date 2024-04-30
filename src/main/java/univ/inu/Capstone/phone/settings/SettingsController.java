@@ -132,4 +132,16 @@ public class SettingsController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.selectPrivateYn(dto, userDetails.getUserSeq()));
     }
+
+    /**
+     * 토글-데이터 수집여부 update
+     * @param dto SettingsRequestDto.dataToggle
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/data/toggle")
+    public ResponseEntity<?> dataToggle(@RequestBody SettingsRequestDto.dataToggle dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.dataToggle(dto, userDetails.getUserSeq()));
+    }
 }
