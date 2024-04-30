@@ -56,4 +56,9 @@ public class SettingsRequestDto {
     public static class dataToggle {
         private Long rdlSeq;        // NFC 구분자
     }
+
+    @Data
+    public static class aiServiceToggle {
+        private Long rdlSeq;        // NFC 구분자
+    }
 }

@@ -144,4 +144,16 @@ public class SettingsController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.dataToggle(dto, userDetails.getUserSeq()));
     }
+
+    /**
+     * 토글-AI 서비스 동의 여부 update
+     * @param dto SettingsRequestDto.dataToggle
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/aiService/toggle")
+    public ResponseEntity<?> aiServiceToggle(@RequestBody SettingsRequestDto.aiServiceToggle dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.aiServiceToggle(dto, userDetails.getUserSeq()));
+    }
 }

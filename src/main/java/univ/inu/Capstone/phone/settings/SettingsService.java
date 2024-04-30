@@ -351,4 +351,54 @@ public class SettingsService {
         return ApiResponse.SUCCESS("SUCCESS", doorLock.getDataYn());
     }
 
+    /**
+     * 토글-AI 서비스 동의 여부 update
+     * @param dto SettingsRequestDto.aiServiceToggle
+     * @param userSeq Long
+     * @return ApiResponse<?>
+     */
+    @Transactional
+    public ApiResponse<?> aiServiceToggle(SettingsRequestDto.aiServiceToggle dto, Long userSeq){
+        // 1. rdlSeq의 유효성 검사
+        Optional<RegistDoorLock> rdlOpt = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (rdlOpt.isEmpty()
+                || (!userSeq.equals(rdlOpt.get().getUser().getUserSeq()))
+                || (rdlOpt.get().getRdlAuth() != 1))
+            return ApiResponse.FAILURE(401, "요청자의 정보가 올바르지 않습니다.");
+
+        // 2. 도어락 조회 및 데이터 수집 여부 조회
+        DoorLock doorLock = rdlOpt.get().getDoorLock();
+        if (doorLock == null)
+            return ApiResponse.FAILURE(404, "도어락 정보가 올바르지 않습니다.");
+
+        // 3. 저장된 값 반대로 데이터 변경
+        doorLock.changeDataYn();
+
+        // 4. 0일 경우, return
+        if (doorLock.getDataYn() == 0)
+            return ApiResponse.SUCCESS(
+                    "SUCCESS"
+                    , SettingsResponseDto.aiServiceToggle.builder()
+                            .aiYn(doorLock.getDataYn())
+                            .build());
+        
+        // 5. 1일 경우, tagless time 조회
+        Optional<TaglessTime> taglessTimeOpt = taglessTimeRepository.findByDoorLock_doorLockSeq(doorLock.getDoorLockSeq());
+        if (taglessTimeOpt.isEmpty())
+            return ApiResponse.FAILURE(404, "도어락 정보가 올바르지 않습니다.");
+
+        // 6.최빈값 도출하여 update
+        TaglessTime taglessTime = taglessTimeOpt.get();
+        List<Object[]> taglessList = taglessTimeRepository.findDtoForBatch(doorLock.getDoorLockSeq());
+        taglessTime.updateTaglessTime(taglessList);
+
+        // 7. 데이터 return
+        return ApiResponse.SUCCESS(
+                "SUCCESS",
+                SettingsResponseDto.aiServiceToggle.builder()
+                        .aiYn(doorLock.getDataYn())
+                        .time(new SettingsResponseDto.taglessTimeDto(taglessTime))
+                        .build());
+    }
+
 }

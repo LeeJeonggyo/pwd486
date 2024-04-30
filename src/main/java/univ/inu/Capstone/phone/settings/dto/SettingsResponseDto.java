@@ -92,4 +92,11 @@ public class SettingsResponseDto {
             this.sunTime = entity.getSunTime();
         }
     }
+
+    @Getter
+    @Builder
+    public static class aiServiceToggle {
+        private int aiYn;       // AI 서비스 동의 여부
+        private taglessTimeDto time;    // 저장된 태그리스 타임
+    }
 }
