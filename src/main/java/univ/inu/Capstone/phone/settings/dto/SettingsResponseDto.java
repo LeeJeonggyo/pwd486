@@ -2,6 +2,7 @@ package univ.inu.Capstone.phone.settings.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import univ.inu.Capstone.common.entity.TaglessTime;
 
 import java.util.List;
 
@@ -61,5 +62,34 @@ public class SettingsResponseDto {
         private Long keyBioSeq;             // 구분자
         private String keyBioName;         // 등록된 카드키 번호
         private int keyBioData;          // 등록된 지문 번호
+    }
+
+    @Getter
+    @Builder
+    public static class selectPrivateYn {
+        private int dataYn;     // 데이터 수집동의 여부
+        private int aiYn;       // AI 서비스 동의 여부
+        private taglessTimeDto time;    // 저장된 태그리스 타임
+    }
+
+    @Getter
+    public static class taglessTimeDto {
+        private final String monTime;     // 월 태그리스 시간
+        private final String tueTime;     // 화 태그리스 시간
+        private final String wedTime;     // 수 태그리스 시간
+        private final String thuTime;     // 목 태그리스 시간
+        private final String friTime;     // 금 태그리스 시간
+        private final String satTime;     // 토 태그리스 시간
+        private final String sunTime;     // 일 태그리스 시간
+
+        public taglessTimeDto(TaglessTime entity){
+            this.monTime = entity.getMonTime();
+            this.tueTime = entity.getTueTime();
+            this.wedTime = entity.getWedTime();
+            this.thuTime = entity.getThuTime();
+            this.friTime = entity.getFriTime();
+            this.satTime = entity.getSatTime();
+            this.sunTime = entity.getSunTime();
+        }
     }
 }

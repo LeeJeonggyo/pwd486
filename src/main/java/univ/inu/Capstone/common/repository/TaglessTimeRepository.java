@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import univ.inu.Capstone.common.entity.TaglessTime;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaglessTimeRepository extends JpaRepository<TaglessTime, Long> {
     @Query( value = "SELECT " +
@@ -54,4 +55,6 @@ public interface TaglessTimeRepository extends JpaRepository<TaglessTime, Long> 
             ") c ON b.maxCnt = c._cnt and b._day = c._day and b.door_lock_seq = c.door_lock_seq " +
             "group by tagless_day, door_lock_seq", nativeQuery = true)
     List<Object[]> findDtoForBatch(@Param("doorLockSeq") Long doorLockSeq);
+
+    Optional<TaglessTime> findByDoorLock_doorLockSeq(Long doorLockSeq);
 }

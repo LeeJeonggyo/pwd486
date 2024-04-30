@@ -119,4 +119,17 @@ public class SettingsController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.tossOwnerAuth(dto, userDetails.getUserSeq()));
     }
+
+
+    /**
+     * 데이터 수집, AI 서비스 동의 여부 조회 로직
+     * @param dto SettingsRequestDto.selectPrivateYn
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/select/privateYn")
+    public ResponseEntity<?> selectPrivateYn(@RequestBody SettingsRequestDto.selectPrivateYn dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.selectPrivateYn(dto, userDetails.getUserSeq()));
+    }
 }

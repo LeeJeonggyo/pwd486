@@ -21,6 +21,7 @@ public class SettingsService {
     private final KeyCardRepository keyCardRepository;
     private final KeyBioRepository keyBioRepository;
     private final OpenLogRepository openLogRepository;
+    private final TaglessTimeRepository taglessTimeRepository;
 
     /**
      * 도어락 비밀번호 변경
@@ -279,6 +280,48 @@ public class SettingsService {
         otherEntity.changeAuth(1);
 
         return ApiResponse.SUCCESS("SUCCESS");
+    }
+
+    /**
+     * 데이터 수집, AI 서비스 동의 여부 조회 로직
+     * @param dto SettingsRequestDto.selectPrivateYn
+     * @param userSeq Long
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> selectPrivateYn(SettingsRequestDto.selectPrivateYn dto, Long userSeq){
+        // 1. rdlSeq의 유효성 검사
+        Optional<RegistDoorLock> rdlOpt = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (rdlOpt.isEmpty()
+                || (!userSeq.equals(rdlOpt.get().getUser().getUserSeq()))
+                || (rdlOpt.get().getRdlAuth() != 1))
+            return ApiResponse.FAILURE(401, "요청자의 정보가 올바르지 않습니다.");
+
+        // 2. 도어락 조회 및 데이터 수집, AI 서비스 동의 여부 조회
+        DoorLock doorLock = rdlOpt.get().getDoorLock();
+        if (doorLock == null)
+            return ApiResponse.FAILURE(404, "도어락 정보가 올바르지 않습니다.");
+
+        // 3. aiYn(AI 서비스 동의 여부) 값이 0인 경우, 데이터 return
+        if (doorLock.getAiYn() == 0){
+            SettingsResponseDto.selectPrivateYn data = SettingsResponseDto.selectPrivateYn.builder()
+                    .dataYn(doorLock.getDataYn())
+                    .aiYn(doorLock.getAiYn())
+                    .build();
+            return ApiResponse.SUCCESS("SUCCESS", data);
+
+        } else {
+            // 4. aiYn(AI 서비스 동의 여부) 값이 1인 경우, 태그리스 타임을 조회하여 return
+            Optional<TaglessTime> taglessTime = taglessTimeRepository.findByDoorLock_doorLockSeq(doorLock.getDoorLockSeq());
+            if (taglessTime.isEmpty())
+                return ApiResponse.FAILURE(404, "도어락 정보가 올바르지 않습니다.");
+            SettingsResponseDto.selectPrivateYn data = SettingsResponseDto.selectPrivateYn.builder()
+                    .dataYn(doorLock.getDataYn())
+                    .aiYn(doorLock.getAiYn())
+                    .time(new SettingsResponseDto.taglessTimeDto(taglessTime.get()))
+                    .build();
+
+            return ApiResponse.SUCCESS("SUCCESS", data);
+        }
     }
 
 }
