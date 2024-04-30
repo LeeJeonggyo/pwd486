@@ -23,7 +23,6 @@ public class DoorLock extends BaseEntity {
     private int failCntTag;         // rfid & nfc 태그 틀린 횟수 (최대 5회)
 
     private int dataYn;     // 데이터 수집동의 여부
-    private int alarmYn;    // 귀가 알림 동의 여부
     private int aiYn;       // AI 서비스 동의 여부
 
 

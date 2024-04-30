@@ -25,6 +25,7 @@ public class RegistDoorLockService {
     private final RegistDoorLockRepository registDoorLockRepository;
     private final DoorLockSecretRespository doorLockSecretRespository;
     private final DoorLockInviteRepository doorLockInviteRepository;
+    private final TaglessTimeRepository taglessTimeRepository;
 
     /**
      * 도어락 기기 정보 등록
@@ -47,7 +48,14 @@ public class RegistDoorLockService {
                 .build();
         doorLockSecretRespository.save(doorLockSecret);
 
-        // 4. 결과 return
+        // 4. 태그리스 시간 low 생성
+        TaglessTime taglessTime = TaglessTime.builder()
+                .doorLock(doorLock)
+                .build();
+        taglessTimeRepository.save(taglessTime);
+
+
+        // 5. 결과 return
         return ApiResponse.SUCCESS("SUCCESS : 도어락 정보가 등록되었습니다.");
     }
 
