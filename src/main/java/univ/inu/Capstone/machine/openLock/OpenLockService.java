@@ -10,6 +10,8 @@ import univ.inu.Capstone.common.repository.*;
 import univ.inu.Capstone.common.notification.NotificationService;
 import univ.inu.Capstone.machine.openLock.dto.OpenLockRequestDto;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +29,7 @@ public class OpenLockService {
     private final KeyCardRepository keyCardRepository;
     private final KeyBioRepository keyBioRepository;
     private final UserRepository userRepository;
+    private final TaglessTimeRepository taglessTimeRepository;
 
     /**
      * 비밀번호 해제
@@ -179,28 +182,33 @@ public class OpenLockService {
         // 1. btSerialNo을 사용해서 도어락 조회 (없으면 안됨.)
         Optional<DoorLock> doorLockOpt = doorLockRepository.findByBtSerialNo(dto.getBtSerialNo());
         if (doorLockOpt.isEmpty()) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
+        DoorLock doorLock = doorLockOpt.get();
 
-        // 2. kakaoId를 사용해서 사용자 조회(if: JWT 토큰 확인으로 Authentication 으로 확인 할 수 있다면 그렇게 변경할 것.)
+        // 2. 태그리스 가능 시간 확인
+        boolean taglessTimeValidation = taglessTimeValidation(doorLock.getDoorLockSeq());
+        if (!taglessTimeValidation)
+            return ApiResponse.FAILURE(404, "태그리스 시간이 아닙니다.");
+
+        // 3. kakaoId를 사용해서 사용자 조회(if: JWT 토큰 확인으로 Authentication 으로 확인 할 수 있다면 그렇게 변경할 것.)
         Optional<User> userOpt = userRepository.findByKakaoId(dto.getKakaoId());
         if (userOpt.isEmpty()) return ApiResponse.ERROR(404, "등록되지 않은 사용자입니다.");
 
-        // 3. owner 권한 확인
-        DoorLock doorLock = doorLockOpt.get();
+        // 4. owner 권한 확인
         User user = userOpt.get();
         Optional<RegistDoorLock> registDoorLockOpt
                 = registDoorLockRepository.findByRdlAuthAndDoorLock_DoorLockSeqAndUser_UserSeq(1, doorLock.getDoorLockSeq(), user.getUserSeq());
         if (registDoorLockOpt.isEmpty()) return ApiResponse.ERROR(401, "태그리스 접근 권한이 없습니다.");
         String rdlName = registDoorLockOpt.get().getRdlName();
 
-        // 4. 도어락으로 open 신호 보내기
+        // 5. 도어락으로 open 신호 보내기
 
-        // 5. 알림전송
+        // 6. 알림전송
         sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", rdlName+"님께서 태그리스 기능을 사용하셨습니다.");
 
-        // 6. 로그기록
+        // 7. 로그기록
         saveOpenLog(1, 4L, doorLock, rdlName);
 
-        // 7. return
+        // 8. return
         return ApiResponse.SUCCESS("인증되었습니다.");
     }
 
@@ -254,5 +262,59 @@ public class OpenLockService {
                 .doorLock(doorLock)
                 .build();
         openLogRepository.save(openLog);
+    }
+
+
+    /**
+     * 태그리스 가능 시간 확인
+     * @param doorLockSeq Long : 도어락 구분자
+     * @return boolean : 태그리스 작동 가능 여부
+     */
+    private boolean taglessTimeValidation(Long doorLockSeq){
+        LocalDateTime nowDateTime = LocalDateTime.now();
+        int dayOfWeekNumber = nowDateTime.getDayOfWeek().getValue();    // 현재 요일
+        LocalTime nowTime = nowDateTime.toLocalTime();                  // 현재 시간
+
+        String taglessTimeStr = getTaglessTime(doorLockSeq, dayOfWeekNumber);   // 현재 요일에 해당하는 태그리스 시작 시간
+        if (taglessTimeStr == null) return false;
+        String[] taglessTimeStrSep = taglessTimeStr.split("\\.");
+
+        int taglessHour = Integer.parseInt(taglessTimeStrSep[0]);
+        int taglessMin = taglessTimeStrSep.length > 1 ? (int) (Integer.parseInt(taglessTimeStrSep[1])*0.06) : 0;
+        LocalTime taglessTimeStart = LocalTime.of(taglessHour, taglessMin, 0);
+        LocalTime taglessTimeEnd = taglessTimeStart.plusHours(3L);
+
+        return !nowTime.isBefore(taglessTimeStart) && !nowTime.isAfter(taglessTimeEnd);
+    }
+
+    /**
+     * 요일에 맞는 태그리스 시간 추출
+     * @param doorLockSeq Long : 도어락 구분자
+     * @param dayOfWeekNumber int : 요일 번호
+     * @return String : 요일에 맞는 태그리스 시간
+     */
+    private String getTaglessTime(Long doorLockSeq, int dayOfWeekNumber){
+        Optional<TaglessTime> taglessTimeOpt = taglessTimeRepository.findByDoorLock_doorLockSeq(doorLockSeq);
+        if (taglessTimeOpt.isEmpty()) return null;     // 태그리스 로우가 없는 경우
+        TaglessTime taglessTime = taglessTimeOpt.get();
+
+        switch (dayOfWeekNumber){
+            case 1:
+                return taglessTime.getMonTime();
+            case 2:
+                return taglessTime.getTueTime();
+            case 3:
+                return taglessTime.getWedTime();
+            case 4:
+                return taglessTime.getThuTime();
+            case 5:
+                return taglessTime.getFriTime();
+            case 6:
+                return taglessTime.getSatTime();
+            case 7:
+                return taglessTime.getSunTime();
+            default:
+                return null;
+        }
     }
 }
