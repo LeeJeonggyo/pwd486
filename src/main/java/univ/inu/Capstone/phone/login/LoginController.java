@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.utils.CustomUserDetails;
 import univ.inu.Capstone.phone.login.dto.LoginDto;
-import univ.inu.Capstone.phone.login.dto.TokenDto;
 
 import javax.servlet.http.HttpServletRequest;
 
