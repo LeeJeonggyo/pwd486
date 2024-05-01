@@ -43,10 +43,14 @@ public class LoginService {
         // 1. kakaoId로 중복 체크 진행
         Optional<User> user = userRepository.findByKakaoId(dto.getKakaoId());
 
-        // 2. id가 없는 경우, 회원가입 진행
+        // 2. kakaoId로 등록된 회원정보가 있는지 확인
         User login = null;
-        if(user.isPresent()) login = user.get();
-        else {
+        if(user.isPresent()) {
+            // 2-1. 회원정보가 존재할 경우, fcmToken update
+            login = user.get();
+            login.updateFcmToken(dto.getFcmToken());
+        } else {
+            // 2-2. 회원정보가 없는 경우, 회원가입 처리
             User newUser = User.builder()
                     .kakaoId(dto.getKakaoId())
                     .fcmToken(dto.getFcmToken())

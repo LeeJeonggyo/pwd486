@@ -39,7 +39,13 @@ public class User extends BaseEntity{
     /* =======================================================
      * update
      * ======================================================= */
+    // jwt 리프레시 토큰 update
     public void updateRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
+    }
+
+    // fcmToken update
+    public void updateFcmToken(String fcmToken){
+        this.fcmToken = fcmToken;
     }
 }
