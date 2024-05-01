@@ -255,6 +255,10 @@ public class OpenLockService {
      * @param nickname String : 비밀번호-알수 없음, nfc-해제한 사람 이름, 카드키/지문-해제구분자
      */
     private void saveOpenLog(int openYn, Long openMethod, DoorLock doorLock, String nickname){
+        // 1. 데이터 수집 미동의시 로그 데이터 저장 안함.
+        if(doorLock.getDataYn() == 0) return;
+
+        // 2. 로그 데이터 저장
         OpenLog openLog = OpenLog.builder()
                 .openYn(openYn)
                 .openMethod(openMethod)
