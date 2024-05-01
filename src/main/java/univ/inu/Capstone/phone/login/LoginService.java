@@ -6,11 +6,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.dto.user.UserDto;
 import univ.inu.Capstone.common.entity.User;
 import univ.inu.Capstone.common.repository.UserRepository;
+import univ.inu.Capstone.common.utils.CustomUserDetails;
 import univ.inu.Capstone.common.utils.JwtUtil;
 import univ.inu.Capstone.phone.login.dto.LoginDto;
 import univ.inu.Capstone.phone.login.dto.TokenDto;
@@ -79,6 +81,24 @@ public class LoginService {
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build());
+    }
+
+    /**
+     * 지문 로그인 - accessToken 으로 로그인 (only accessToken)
+     * @param dto LoginDto
+     * @param userDetails CustomUserDetails
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> accessLogin(LoginDto dto, CustomUserDetails userDetails){
+        // 1. userSeq와 fcmToken으로 사용자 로그인 확인
+        Optional<User> user = userRepository.findByUserSeqAndFcmToken(userDetails.getUserSeq(), dto.getFcmToken());
+        if (user.isEmpty())
+            return ApiResponse.FAILURE(401, "로그인 사용자 정보가 올바르지 않습니다.");
+
+        return ApiResponse.SUCCESS("SUCCESS : 로그인 완료",
+                        TokenDto.accessLogin.builder()
+                                .nickname(userDetails.getNickname())
+                                .build());
     }
 
     /**

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
+import univ.inu.Capstone.common.utils.CustomUserDetails;
 import univ.inu.Capstone.phone.login.dto.LoginDto;
 import univ.inu.Capstone.phone.login.dto.TokenDto;
 
@@ -35,12 +36,9 @@ public class LoginController {
      * @return ResponseEntity<?>
      */
     @PostMapping("/accessLogin")
-    public ResponseEntity<?> accessLogin(Authentication authentication) {
-        return ResponseEntity.ok().body(
-                ApiResponse.SUCCESS("SUCCESS : 로그인 완료",
-                    TokenDto.accessLogin.builder()
-                        .nickname(authentication.getName())
-                        .build()));
+    public ResponseEntity<?> accessLogin(@RequestBody LoginDto dto, Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(loginService.accessLogin(dto, userDetails));
     }
 
     /**
