@@ -11,9 +11,11 @@ public class SettingsResponseDto {
     @Getter
     @Builder
     public static class lastLog {
-        private Long openMethod;
-        private String nickname;
-        private String userName;
+        private int dataYn;         // 로그데이터 존재 여부
+        private Long openMethod;    // 오픈 방식
+        private String nickname;    // 오픈한 사람
+        private String userName;    // owner 이름
+        private String lastTime;    // 마지막 로그 시간
     }
 
     @Getter

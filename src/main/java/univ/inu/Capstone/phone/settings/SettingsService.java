@@ -41,15 +41,18 @@ public class SettingsService {
 
         // 2. 마지막 로그 조회
         Optional<OpenLog> openLogOpt = openLogRepository.findTopByOpenYnAndDoorLock_DoorLockSeqOrderByOpenLogSeqDesc(1, registDoorLock.getDoorLock().getDoorLockSeq());
-        if(openLogOpt.isEmpty()) return ApiResponse.SUCCESS("해제한 기록이 없습니다.", null);
 
         return ApiResponse.SUCCESS(
                 "마지막 해제 기록입니다.",
-                SettingsResponseDto.lastLog.builder()
-                        .openMethod(openLogOpt.get().getOpenMethod())
-                        .nickname(openLogOpt.get().getNickname())
-                        .userName(registDoorLock.getUser().getNickname())
-                        .build());
+                openLogOpt.isEmpty() ?
+                        SettingsResponseDto.lastLog.builder().dataYn(0).build()
+                        : SettingsResponseDto.lastLog.builder()
+                            .dataYn(1)
+                            .openMethod(openLogOpt.get().getOpenMethod())
+                            .nickname(openLogOpt.get().getNickname())
+                            .userName(registDoorLock.getUser().getNickname())
+                            .lastTime(openLogOpt.get().getInpDate().toString())
+                            .build());
     }
 
     /**
