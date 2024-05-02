@@ -2,11 +2,20 @@ package univ.inu.Capstone.phone.settings.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import univ.inu.Capstone.common.entity.OpenLog;
 import univ.inu.Capstone.common.entity.TaglessTime;
 
 import java.util.List;
 
 public class SettingsResponseDto {
+    @Getter
+    @Builder
+    public static class lastLog {
+        private Long openMethod;
+        private String nickname;
+        private String userName;
+    }
+
     @Getter
     @Builder
     public static class viewLog {

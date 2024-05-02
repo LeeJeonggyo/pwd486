@@ -5,6 +5,11 @@ import lombok.Data;
 @Data
 public class SettingsRequestDto {
     @Data
+    public static class lastLog {
+        private Long rdlSeq;        // 도어락 구분자
+    }
+
+    @Data
     public static class changePw {
         private Long doorLockSeq;       // 도어락 구분자
         private String dlSecretNo;      // 현재 비밀번호

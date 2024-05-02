@@ -24,6 +24,35 @@ public class SettingsService {
     private final TaglessTimeRepository taglessTimeRepository;
 
     /**
+     * 도어락의 마지막 출입시간 기록
+     * @param dto SettingsRequestDto.lastLog
+     * @param userSeq Long
+     * @return ApiResponse<?>
+     */
+    @Transactional
+    public ApiResponse<?> lastLog (SettingsRequestDto.lastLog dto, Long userSeq){
+        // 1. 요청자가 해당 도어락의 owner 권한을 가진사람이 맞는지 확인
+        Optional<RegistDoorLock> registDoorLockOpt = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (registDoorLockOpt.isEmpty()
+                || !userSeq.equals(registDoorLockOpt.get().getUser().getUserSeq())
+                || registDoorLockOpt.get().getRdlAuth() != 1)
+            return ApiResponse.FAILURE(401, "권한이 없습니다.");
+        RegistDoorLock registDoorLock = registDoorLockOpt.get();
+
+        // 2. 마지막 로그 조회
+        Optional<OpenLog> openLogOpt = openLogRepository.findTopByOpenYnAndDoorLock_DoorLockSeqOrderByOpenLogSeqDesc(1, registDoorLock.getDoorLock().getDoorLockSeq());
+        if(openLogOpt.isEmpty()) return ApiResponse.SUCCESS("해제한 기록이 없습니다.", null);
+
+        return ApiResponse.SUCCESS(
+                "마지막 해제 기록입니다.",
+                SettingsResponseDto.lastLog.builder()
+                        .openMethod(openLogOpt.get().getOpenMethod())
+                        .nickname(openLogOpt.get().getNickname())
+                        .userName(registDoorLock.getUser().getNickname())
+                        .build());
+    }
+
+    /**
      * 도어락 비밀번호 변경
      * @param dto SettingsRequestDto.changePw
      * @param userSeq Long

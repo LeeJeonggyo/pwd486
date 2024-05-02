@@ -24,6 +24,18 @@ public class SettingsController {
     private final SettingsService settingsService;
 
     /**
+     * 도어락의 마지막 출입시간 기록
+     * @param dto SettingsRequestDto.lastLog
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/last/log")
+    public ResponseEntity<?> lastLog(@RequestBody SettingsRequestDto.lastLog dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.lastLog(dto, userDetails.getUserSeq()));
+    }
+
+    /**
      * 도어락 비밀번호 변경
      * @param dto SettingsRequestDto.changePw
      * @param authentication Authentication
