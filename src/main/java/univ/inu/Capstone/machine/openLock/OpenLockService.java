@@ -55,7 +55,7 @@ public class OpenLockService {
             // 4-1-2. 비밀번호 해제 성공 알림 전송
             sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", "비밀번호가 사용되었습니다.");
             // 4-1-3. 비밀번호 해제 로그 생성
-            saveOpenLog(1, 1L, doorLock, "");
+            saveOpenLog(1, 1L, doorLock, "", null);
             // 4-1-4. return
             return ApiResponse.SUCCESS("인증되었습니다.");
         } else { // 4-2. 해제 실패
@@ -64,7 +64,7 @@ public class OpenLockService {
             // 4-1-2. 비밀번호 해제 실패 알림 전송
             sendNotification(doorLock.getDoorLockSeq(), "[FAIL] 문 열림 실패", "비밀번호가 사용되었습니다.");
             // 4-1-3. 비밀번호 해제 실패 로그 생성
-            saveOpenLog(0, 1L, doorLock, "???");
+            saveOpenLog(0, 1L, doorLock, "???", null);
             // 4-1-4. return
             return ApiResponse.FAILURE(400, "비밀번호 입력이 잘못되었습니다.");
         }
@@ -103,7 +103,7 @@ public class OpenLockService {
                 // 4-1-3-1. 비밀번호 해제 성공 알림 전송 (GUEST 권한은 알림 X)
                 sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", nfcEntity.getRdlName()+"님께서 문을 열었습니다.");
                 // 4-1-3-2. 비밀번호 해제 로그 생성 (GUEST 권한은 해제 로그 X)
-                saveOpenLog(1, 2L, doorLock, nfcEntity.getRdlName()+"(핸드폰)");
+                saveOpenLog(1, 2L, doorLock, nfcEntity.getRdlName()+"(핸드폰)", nfcEntity.getUser());
             }
 
             // 4-1-4. return
@@ -122,7 +122,7 @@ public class OpenLockService {
             // 6-1-2. 비밀번호 해제 성공 알림 전송
             sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", keyCardEntity.getKeyCardName()+" 카드키가 사용되었습니다.");
             // 6-1-3. 비밀번호 해제 로그 생성
-            saveOpenLog(1, 2L, doorLock, keyCardEntity.getKeyCardName()+"(키카드)");
+            saveOpenLog(1, 2L, doorLock, keyCardEntity.getKeyCardName()+"(키카드)", null);
             // 6-1-3. return
             return ApiResponse.SUCCESS("인증되었습니다.");
         } else { // 4-2. 해제 실패
@@ -131,7 +131,7 @@ public class OpenLockService {
             // 6-1-2. 비밀번호 해제 실패 알림 전송
             sendNotification(doorLock.getDoorLockSeq(), "[FAIL] 문 열림 실패", "태그기능이 사용되었습니다.");
             // 6-1-3. 비밀번호 해제 실패 로그 생성
-            saveOpenLog(0, 2L, doorLock, "???");
+            saveOpenLog(0, 2L, doorLock, "???", null);
             // 6-1-4. return
             return ApiResponse.FAILURE(400, "등록되지 않은 태깅 정보입니다.");
         }
@@ -153,21 +153,21 @@ public class OpenLockService {
             Optional<KeyBio> keyBioOpt = keyBioRepository.findByKeyBioDataAndDoorLock_DoorLockSeq(dto.getKeyBioData(), doorLock.getDoorLockSeq());
             if (keyBioOpt.isEmpty()) { // 이미 문은 열린 상태이므로 SUCCESS 상태로 알림 전송 및 로그 기록
                 sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", "알수 없는 지문이 사용되었습니다.");
-                saveOpenLog(1, 3L, doorLock, "???");
+                saveOpenLog(1, 3L, doorLock, "???", null);
                 return ApiResponse.ERROR(401, "등록되지 않은 지문정보입니다.");
             }
             // 2-1-2. 지문 해제 성공 알림 전송
             String keyBioName = keyBioOpt.get().getKeyBioName();
             sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", keyBioName+" 지문이 사용되었습니다.");
             // 2-1-3. 지문 해제 로그 생성
-            saveOpenLog(1, 3L, doorLock, keyBioName);
+            saveOpenLog(1, 3L, doorLock, keyBioName, null);
             // 2-1-4. return
             return ApiResponse.SUCCESS("로그등록이 완료되었습니다.");
         } else { // 2-2. 해제 실패
             // 2-1-1. 지문 해제 실패 알림 전송
             sendNotification(doorLock.getDoorLockSeq(), "[FAIL] 문 열림 실패", "알수 없는 지문이 사용되었습니다.");
             // 2-1-2. 지문 해제 실패 로그 생성
-            saveOpenLog(0, 3L, doorLock, "???");
+            saveOpenLog(0, 3L, doorLock, "???", null);
             // 2-1-3. return
             return ApiResponse.SUCCESS("로그등록이 완료되었습니다.");
         }
@@ -206,7 +206,7 @@ public class OpenLockService {
         sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", rdlName+"님께서 태그리스 기능을 사용하셨습니다.");
 
         // 7. 로그기록
-        saveOpenLog(1, 4L, doorLock, rdlName);
+        saveOpenLog(1, 4L, doorLock, rdlName, user);
 
         // 8. return
         return ApiResponse.SUCCESS("인증되었습니다.");
@@ -254,7 +254,7 @@ public class OpenLockService {
      * @param doorLock DoorLock : 도어락Entity
      * @param nickname String : 비밀번호-알수 없음, nfc-해제한 사람 이름, 카드키/지문-해제구분자
      */
-    private void saveOpenLog(int openYn, Long openMethod, DoorLock doorLock, String nickname){
+    private void saveOpenLog(int openYn, Long openMethod, DoorLock doorLock, String nickname, User user){
         // 1. 데이터 수집 미동의시 로그 데이터 저장 안함.
         if(doorLock.getDataYn() == 0) return;
 
@@ -264,6 +264,7 @@ public class OpenLockService {
                 .openMethod(openMethod)
                 .nickname(nickname)
                 .doorLock(doorLock)
+                .user(user)
                 .build();
         openLogRepository.save(openLog);
     }

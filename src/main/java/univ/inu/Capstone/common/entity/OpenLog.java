@@ -24,4 +24,8 @@ public class OpenLog extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="doorLockSeq")
     private DoorLock doorLock;          // 도어락 구분자
+
+    @ManyToOne
+    @JoinColumn(name="userSeq")
+    private User user;          // 사용자 구분자
 }

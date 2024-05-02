@@ -36,6 +36,9 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user")
     private List<DoorLockInvite> doorLockInvite;
 
+    @OneToMany(mappedBy = "user")
+    private List<OpenLog> openLog;
+
     /* =======================================================
      * update
      * ======================================================= */
