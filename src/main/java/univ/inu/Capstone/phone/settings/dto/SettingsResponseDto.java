@@ -15,6 +15,7 @@ public class SettingsResponseDto {
         private String nickname;        // 사용자 이름
         private String inpDate;         // 출입 날짜
         private String inpTime;         // 출입 시간
+        private int isThisUser;         // 요청한 사용자와 로그에 등록된 사용자가 일치하는지 여부
 
         public void setOpenMethod(Long openMethod) {
             if (openMethod == 1L)

@@ -71,6 +71,7 @@ public class SettingsService {
                     .nickname(entity.getNickname())
                     .inpDate(entity.getInpDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                     .inpTime(entity.getInpDate().format(DateTimeFormatter.ofPattern("HH시 mm분 ss.SSS초")))
+                    .isThisUser(userSeq.equals(entity.getUser().getUserSeq()) ? 1 : 0)
                     .build();
             data.setOpenMethod(entity.getOpenMethod()); // 오픈 방식
             resultList.add(data);
