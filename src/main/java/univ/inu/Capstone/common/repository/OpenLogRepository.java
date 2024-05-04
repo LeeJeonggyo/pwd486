@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OpenLogRepository extends JpaRepository<OpenLog, Long> {
-    List<OpenLog> findByDoorLock_DoorLockSeq(Long doorLockSeq);
+    List<OpenLog> findByDoorLock_DoorLockSeqOrderByOpenLogSeqDesc(Long doorLockSeq);
     Optional<OpenLog> findTopByOpenYnAndDoorLock_DoorLockSeqOrderByOpenLogSeqDesc(int openYn, Long doorLockSeq);
 }

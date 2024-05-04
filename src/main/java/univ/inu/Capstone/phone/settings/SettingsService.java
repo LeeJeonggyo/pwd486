@@ -95,18 +95,10 @@ public class SettingsService {
             return ApiResponse.ERROR(401, "권한이 없습니다.");
 
         // 2. 도어락 구분자를 사용해서 출입 로그 가져오기 & dto 변환
-        List<OpenLog> openLogList = openLogRepository.findByDoorLock_DoorLockSeq(dto.getDoorLockSeq());
+        List<OpenLog> openLogList = openLogRepository.findByDoorLock_DoorLockSeqOrderByOpenLogSeqDesc(dto.getDoorLockSeq());
         List<SettingsResponseDto.viewLog> resultList = new ArrayList<>();
         for (OpenLog entity : openLogList) {
-            SettingsResponseDto.viewLog data = SettingsResponseDto.viewLog.builder()
-                    .openYn(entity.getOpenYn())
-                    .nickname(entity.getNickname())
-                    .inpDate(entity.getInpDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                    .inpTime(entity.getInpDate().format(DateTimeFormatter.ofPattern("HH시 mm분 ss.SSS초")))
-                    .isThisUser(userSeq.equals(entity.getUser().getUserSeq()) ? 1 : 0)
-                    .build();
-            data.setOpenMethod(entity.getOpenMethod()); // 오픈 방식
-            resultList.add(data);
+            resultList.add(new SettingsResponseDto.viewLog(entity, userSeq));
         }
 
         return ApiResponse.SUCCESS("SUCCESS", resultList);
@@ -405,14 +397,14 @@ public class SettingsService {
             return ApiResponse.FAILURE(404, "도어락 정보가 올바르지 않습니다.");
 
         // 3. 저장된 값 반대로 데이터 변경
-        doorLock.changeDataYn();
+        doorLock.changeAiYn();
 
         // 4. 0일 경우, return
-        if (doorLock.getDataYn() == 0)
+        if (doorLock.getAiYn() == 0)
             return ApiResponse.SUCCESS(
                     "SUCCESS"
                     , SettingsResponseDto.aiServiceToggle.builder()
-                            .aiYn(doorLock.getDataYn())
+                            .aiYn(doorLock.getAiYn())
                             .build());
         
         // 5. 1일 경우, tagless time 조회
@@ -429,7 +421,7 @@ public class SettingsService {
         return ApiResponse.SUCCESS(
                 "SUCCESS",
                 SettingsResponseDto.aiServiceToggle.builder()
-                        .aiYn(doorLock.getDataYn())
+                        .aiYn(doorLock.getAiYn())
                         .time(new SettingsResponseDto.taglessTimeDto(taglessTime))
                         .build());
     }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import univ.inu.Capstone.common.entity.OpenLog;
 import univ.inu.Capstone.common.entity.TaglessTime;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class SettingsResponseDto {
@@ -19,26 +20,21 @@ public class SettingsResponseDto {
     }
 
     @Getter
-    @Builder
     public static class viewLog {
         private int openYn;             // 해제 여부
-        private String openMethod;      // 해제 방법
+        private Long openMethod;      // 해제 방법
         private String nickname;        // 사용자 이름
         private String inpDate;         // 출입 날짜
         private String inpTime;         // 출입 시간
         private int isThisUser;         // 요청한 사용자와 로그에 등록된 사용자가 일치하는지 여부
 
-        public void setOpenMethod(Long openMethod) {
-            if (openMethod == 1L)
-                this.openMethod = "password";
-            else if (openMethod == 2L)
-                this.openMethod = "TAG(NFC or RFID)";
-            else if (openMethod == 3L)
-                this.openMethod = "fingerprint";
-            else if (openMethod == 4L)
-                this.openMethod = "Tagless";
-            else
-                this.openMethod = "정의 할수 없는 출입";
+        public viewLog(OpenLog entity, Long userSeq){
+            this.openYn = entity.getOpenYn();
+            this.openMethod = entity.getOpenMethod();
+            this.nickname = entity.getNickname();
+            this.inpDate = entity.getInpDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            this.inpTime = entity.getInpDate().format(DateTimeFormatter.ofPattern("HH시 mm분 ss.SSS초"));
+            this.isThisUser = (entity.getUser() != null && userSeq.equals(entity.getUser().getUserSeq())) ? 1 : 0;
         }
     }
 
