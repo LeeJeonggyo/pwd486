@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import univ.inu.Capstone.common.entity.DoorLockInvite;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface DoorLockInviteRepository extends JpaRepository<DoorLockInvite, Long> {
@@ -22,4 +23,6 @@ public interface DoorLockInviteRepository extends JpaRepository<DoorLockInvite, 
             "AND e.inpDate > :expireTime " +
             "AND e.useYn = 0")
     Optional<DoorLockInvite> findByInviteSeq(@Param("inviteSeq") Long inviteSeq, @Param("expireTime") LocalDateTime expireTime);
+
+    List<DoorLockInvite> findByDoorLock_DoorLockSeq(Long doorLockSeq);
 }

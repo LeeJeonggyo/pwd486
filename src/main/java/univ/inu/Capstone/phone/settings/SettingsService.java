@@ -21,6 +21,7 @@ public class SettingsService {
     private final KeyBioRepository keyBioRepository;
     private final OpenLogRepository openLogRepository;
     private final TaglessTimeRepository taglessTimeRepository;
+    private final DoorLockInviteRepository doorLockInviteRepository;
 
     /**
      * 도어락의 마지막 출입시간 기록
@@ -462,5 +463,48 @@ public class SettingsService {
                         .time(new SettingsResponseDto.taglessTimeDto(taglessTime))
                         .build());
     }
+
+    /**
+     * owner의 양도 없는 삭제
+     * @param dto SettingsRequestDto.deleteOwner
+     * @param userSeq Long
+     * @return ApiResponse<?>
+     */
+    @Transactional
+    public ApiResponse<?> deleteOwner(SettingsRequestDto.deleteOwner dto, Long userSeq){
+        // 1. rdlSeq의 유효성 검사
+        Optional<RegistDoorLock> rdlOpt = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (rdlOpt.isEmpty()
+                || (!userSeq.equals(rdlOpt.get().getUser().getUserSeq()))
+                || (rdlOpt.get().getRdlAuth() != 1))
+            return ApiResponse.FAILURE(401, "요청자의 정보가 올바르지 않습니다.");
+        RegistDoorLock rdlEntity = rdlOpt.get();
+        DoorLock doorLockEntity = rdlEntity.getDoorLock();
+
+        // 2. 로그데이터 삭제
+        List<OpenLog> openLogList = openLogRepository.findByDoorLock_DoorLockSeqOrderByOpenLogSeqDesc(doorLockEntity.getDoorLockSeq());
+        for (OpenLog entity : openLogList) openLogRepository.delete(entity);
+
+        // 3. 태그리스 시간 null로 초기화
+        Optional<TaglessTime> taglessTimeOpt = taglessTimeRepository.findByDoorLock_doorLockSeq(doorLockEntity.getDoorLockSeq());
+        if (taglessTimeOpt.isPresent()) {
+            TaglessTime taglessTimeEntity = taglessTimeOpt.get();
+            taglessTimeEntity.resetTaglessTime();
+        }
+
+        // 4. 도어락에서 aiYn, dataYn 0으로 초기화
+        doorLockEntity.resetYn();
+
+        // 5. 초대코드 삭제
+        List<DoorLockInvite> doorLockInviteList = doorLockInviteRepository.findByDoorLock_DoorLockSeq(doorLockEntity.getDoorLockSeq());
+        for (DoorLockInvite entity : doorLockInviteList) doorLockInviteRepository.delete(entity);
+
+        // 6. 등록된 모든 nfc 제거
+        List<RegistDoorLock> doorLockList = registDoorLockRepository.findByDoorLock_DoorLockSeq(doorLockEntity.getDoorLockSeq());
+        for (RegistDoorLock entity : doorLockList) registDoorLockRepository.delete(entity);
+
+        return ApiResponse.SUCCESS("owner 의 양도없는 삭제로 모든 nfc 카드키가 삭제 되었습니다.");
+    }
+
 
 }

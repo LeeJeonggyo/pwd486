@@ -71,5 +71,10 @@ public class DoorLock extends BaseEntity {
     public void changeAiYn(){
         this.aiYn = this.aiYn == 0 ? 1 : 0;
     }
+
+    public void resetYn(){
+        this.dataYn = 0;
+        this.aiYn = 0;
+    }
 }
 

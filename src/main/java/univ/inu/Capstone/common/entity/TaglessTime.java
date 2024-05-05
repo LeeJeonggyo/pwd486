@@ -62,4 +62,15 @@ public class TaglessTime extends BaseEntity {
             }
         }
     }
+
+    // 태그리스 타임 null 로 초기화
+    public void resetTaglessTime(){
+        this.monTime = null;
+        this.tueTime = null;
+        this.wedTime = null;
+        this.thuTime = null;
+        this.friTime = null;
+        this.satTime = null;
+        this.sunTime = null;
+    }
 }

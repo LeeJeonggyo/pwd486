@@ -175,4 +175,16 @@ public class SettingsController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(settingsService.aiServiceToggle(dto, userDetails.getUserSeq()));
     }
+
+    /**
+     * owner의 양도 없는 삭제
+     * @param dto SettingsRequestDto.dataToggle
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/delete/owner")
+    public ResponseEntity<?> deleteOwner(@RequestBody SettingsRequestDto.deleteOwner dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.deleteOwner(dto, userDetails.getUserSeq()));
+    }
 }
