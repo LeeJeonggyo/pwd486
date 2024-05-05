@@ -129,7 +129,7 @@ public class SettingsService {
             return ApiResponse.FAILURE(401,"조회 권한이 없습니다.");
 
         // 4. NFC 정보
-        List<RegistDoorLock> rdlList = registDoorLockRepository.findByDoorLock_DoorLockSeq(registDoorLock.getDoorLock().getDoorLockSeq());
+        List<RegistDoorLock> rdlList = registDoorLockRepository.findNoOwnerListByDoorLockSeqOrder(registDoorLock.getDoorLock().getDoorLockSeq());
         List<SettingsResponseDto.viewRegistKeyNfc> rdlListDto = new ArrayList<>();
         for (RegistDoorLock entity : rdlList) {
             rdlListDto.add(SettingsResponseDto.viewRegistKeyNfc.builder()
