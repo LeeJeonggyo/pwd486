@@ -45,7 +45,10 @@ public class SettingsService {
         return ApiResponse.SUCCESS(
                 "마지막 해제 기록입니다.",
                 openLogOpt.isEmpty() ?
-                        SettingsResponseDto.lastLog.builder().dataYn(0).build()
+                        SettingsResponseDto.lastLog.builder()
+                                .dataYn(0)
+                                .userName(registDoorLock.getUser().getNickname())
+                                .build()
                         : SettingsResponseDto.lastLog.builder()
                             .dataYn(1)
                             .openMethod(openLogOpt.get().getOpenMethod())
