@@ -74,6 +74,12 @@ public class SettingsResponseDto {
 
     @Getter
     @Builder
+    public static class viewApproveNfcList{
+        private List<viewRegistKeyNfc> rdlList;         // NFC 정보 리스트
+    }
+
+    @Getter
+    @Builder
     public static class selectPrivateYn {
         private int dataYn;     // 데이터 수집동의 여부
         private int aiYn;       // AI 서비스 동의 여부

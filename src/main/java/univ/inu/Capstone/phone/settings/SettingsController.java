@@ -121,6 +121,18 @@ public class SettingsController {
     }
 
     /**
+     * 승인된 nfc 해제키 리스트 조회
+     * @param dto SettingsRequestDto.viewApproveNfcList
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/view/approve/nfcList")
+    public ResponseEntity<?> viewApproveNfcList(@RequestBody SettingsRequestDto.viewApproveNfcList dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(settingsService.viewApproveNfcList(dto, userDetails.getUserSeq()));
+    }
+
+    /**
      * owner 권한 양도
      * @param dto SettingsRequestDto.tossOwnerAuth
      * @param authentication Authentication

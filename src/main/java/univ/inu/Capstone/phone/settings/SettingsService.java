@@ -217,7 +217,7 @@ public class SettingsService {
                 || userEntity.get().getRdlAuth() != 1)
             return ApiResponse.FAILURE(401, "승인 요청자의 정보가 올바르지 않습니다.");
 
-        // 3. owner 권한이 맞을 경우, 삭제 처리
+        // 3. 삭제 처리
         RegistDoorLock entity = permitEntity.get();
         registDoorLockRepository.delete(entity);
 
@@ -278,6 +278,41 @@ public class SettingsService {
         keyBioRepository.delete(entity);
 
         return ApiResponse.SUCCESS("삭제되었습니다.");
+    }
+
+    /**
+     * 승인된 nfc 해제키 리스트 조회
+     * @param dto SettingsRequestDto.viewApproveNfcList
+     * @param userSeq Long
+     * @return ApiResponse<?>
+     */
+    public ApiResponse<?> viewApproveNfcList(SettingsRequestDto.viewApproveNfcList dto, Long userSeq){
+        // 1. rdlSeq의 유효성 검사
+        Optional<RegistDoorLock> rdlOpt = registDoorLockRepository.findById(dto.getRdlSeq());
+        if (rdlOpt.isEmpty()
+                || (!userSeq.equals(rdlOpt.get().getUser().getUserSeq()))
+                || (rdlOpt.get().getRdlAuth() != 1))
+            return ApiResponse.FAILURE(401, "요청자의 정보가 올바르지 않습니다.");
+
+        RegistDoorLock rdlEntity = rdlOpt.get();
+
+        // 2. 승인된 nfc 해제키 리스트 조회
+        List<RegistDoorLock> rdlList = registDoorLockRepository.findNoOwnerListByRdlApproveAndDoorLock_DoorLockSeq(1, rdlEntity.getDoorLock().getDoorLockSeq());
+        List<SettingsResponseDto.viewRegistKeyNfc> rdlListDto = new ArrayList<>();
+        for (RegistDoorLock entity : rdlList) {
+            rdlListDto.add(SettingsResponseDto.viewRegistKeyNfc.builder()
+                    .rdlSeq(entity.getRdlSeq())
+                    .rdlName(entity.getRdlName())
+                    .rdlAuth(entity.getRdlAuth())
+                    .rdlApprove(entity.getRdlApprove())
+                    .build());
+        }
+
+        return ApiResponse.SUCCESS(
+                "조회가 완료되었습니다.",
+                SettingsResponseDto.viewApproveNfcList.builder()
+                        .rdlList(rdlListDto)
+                        .build());
     }
 
     /**

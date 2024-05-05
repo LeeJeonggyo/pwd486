@@ -23,4 +23,12 @@ public interface RegistDoorLockRepository extends JpaRepository<RegistDoorLock, 
             "AND rdl_auth != 1 " +
             "ORDER BY rdl_approve, rdl_auth, rdl_seq ASC", nativeQuery = true)
     List<RegistDoorLock> findNoOwnerListByDoorLockSeqOrder(@Param("doorLockSeq") Long doorLockSeq);
+
+    @Query(value = "SELECT * " +
+            "FROM regist_door_lock " +
+            "WHERE door_lock_seq = :doorLockSeq " +
+            "AND rdl_approve = :rdlApprove " +
+            "AND rdl_auth != 1 " +
+            "ORDER BY rdl_approve, rdl_auth, rdl_seq ASC", nativeQuery = true)
+    List<RegistDoorLock> findNoOwnerListByRdlApproveAndDoorLock_DoorLockSeq(@Param("rdlApprove") int rdlApprove, @Param("doorLockSeq") Long doorLockSeq);
 }

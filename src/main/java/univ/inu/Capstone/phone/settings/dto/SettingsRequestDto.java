@@ -48,6 +48,11 @@ public class SettingsRequestDto {
     }
 
     @Data
+    public static class viewApproveNfcList {
+        private Long rdlSeq;        // 요청자 구분자
+    }
+
+    @Data
     public static class tossOwnerAuth {
         private Long rdlSeq;        // owner 권한을 양도할 NFC 구분자
     }
