@@ -9,7 +9,6 @@ import univ.inu.Capstone.phone.settings.dto.SettingsRequestDto;
 import univ.inu.Capstone.phone.settings.dto.SettingsResponseDto;
 
 import javax.transaction.Transactional;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service

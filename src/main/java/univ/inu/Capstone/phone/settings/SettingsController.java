@@ -8,13 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.utils.CustomUserDetails;
 import univ.inu.Capstone.phone.settings.dto.SettingsRequestDto;
-import univ.inu.Capstone.phone.settings.dto.SettingsResponseDto;
-
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
