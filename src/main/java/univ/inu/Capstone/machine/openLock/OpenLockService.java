@@ -10,6 +10,7 @@ import univ.inu.Capstone.common.repository.*;
 import univ.inu.Capstone.common.notification.NotificationService;
 import univ.inu.Capstone.machine.openLock.dto.OpenLockRequestDto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -278,18 +279,33 @@ public class OpenLockService {
     private boolean taglessTimeValidation(Long doorLockSeq){
         LocalDateTime nowDateTime = LocalDateTime.now();
         int dayOfWeekNumber = nowDateTime.getDayOfWeek().getValue();    // 현재 요일
-        LocalTime nowTime = nowDateTime.toLocalTime();                  // 현재 시간
+        LocalDate nowDate = nowDateTime.toLocalDate();                  // 현재 날짜
 
         String taglessTimeStr = getTaglessTime(doorLockSeq, dayOfWeekNumber);   // 현재 요일에 해당하는 태그리스 시작 시간
         if (taglessTimeStr == null) return false;
-        String[] taglessTimeStrSep = taglessTimeStr.split("\\.");
 
+        LocalDateTime taglessDateTimeStart = getLocalDateTime(taglessTimeStr, nowDate);
+        LocalDateTime taglessDateTimeEnd = taglessDateTimeStart.plusHours(3L);
+
+        return !nowDateTime.isBefore(taglessDateTimeStart) && !nowDateTime.isAfter(taglessDateTimeEnd);
+    }
+
+    private static LocalDateTime getLocalDateTime(String taglessTimeStr, LocalDate nowDate) {
+        String[] taglessTimeStrSep = taglessTimeStr.split("\\.");
         int taglessHour = Integer.parseInt(taglessTimeStrSep[0]);
         int taglessMin = taglessTimeStrSep.length > 1 ? (int) (Integer.parseInt(taglessTimeStrSep[1])*0.06) : 0;
-        LocalTime taglessTimeStart = LocalTime.of(taglessHour, taglessMin, 0);
-        LocalTime taglessTimeEnd = taglessTimeStart.plusHours(3L);
 
-        return !nowTime.isBefore(taglessTimeStart) && !nowTime.isAfter(taglessTimeEnd);
+        if(taglessTimeStr.indexOf('-') != -1){
+            taglessHour = 23;
+            taglessMin = 60 - taglessMin;
+        }
+
+        LocalTime taglessTimeStart = LocalTime.of(taglessHour, taglessMin, 0);
+
+        if(taglessTimeStr.indexOf('-') != -1)
+            return LocalDateTime.of(nowDate.minusDays(1L), taglessTimeStart);
+        else
+            return LocalDateTime.of(nowDate, taglessTimeStart);
     }
 
     /**
