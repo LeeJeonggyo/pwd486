@@ -38,4 +38,16 @@ public class MainController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok().body(mainService.delNfcOther(dto, userDetails.getUserSeq()));
     }
+
+    /**
+     * nfc 활성화 로그 실행
+     * @param dto MainRequestDto.activityNfc
+     * @param authentication Authentication
+     * @return ResponseEntity<?>
+     */
+    @PostMapping("/activate/nfc")
+    public ResponseEntity<?> activateNfc(@RequestBody MainRequestDto.activateNfc dto, Authentication authentication){
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok().body(mainService.activateNfc(dto, userDetails.getUserSeq()));
+    }
 }

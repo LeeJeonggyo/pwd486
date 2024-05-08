@@ -8,4 +8,8 @@ public class MainRequestDto {
     public static class delNfcOther {
         private Long rdlSeq;
     }
+    @Data
+    public static class activateNfc {
+        private Long rdlSeq;
+    }
 }

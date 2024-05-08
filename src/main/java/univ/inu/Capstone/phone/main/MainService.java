@@ -3,7 +3,9 @@ package univ.inu.Capstone.phone.main;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
+import univ.inu.Capstone.common.entity.ActivateNfcLog;
 import univ.inu.Capstone.common.entity.RegistDoorLock;
+import univ.inu.Capstone.common.repository.ActivateNfcLogRepository;
 import univ.inu.Capstone.common.repository.RegistDoorLockRepository;
 import univ.inu.Capstone.phone.main.dto.MainRequestDto;
 import univ.inu.Capstone.phone.main.dto.MainResponseDto;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class MainService {
 
     private final RegistDoorLockRepository registDoorLockRepository;
+    private final ActivateNfcLogRepository activateNfcLogRepository;
 
     /**
      * 사용자별 등록된 nfc 데이터 리스트 출력
@@ -54,5 +57,33 @@ public class MainService {
         // 3. delete
         registDoorLockRepository.delete(check.get());
         return ApiResponse.SUCCESS("삭제되었습니다.");
+    }
+
+    /**
+     * nfc 활성화 로그 실행
+     * @param dto MainRequestDto.activityNfc
+     * @return ApiResponse<MainResponseDto.activityNfc>
+     */
+    public ApiResponse<?> activateNfc(MainRequestDto.activateNfc dto, Long userSeq){
+        // 1. 해당 도어락에 등록된 NFC가 맞는지 확인
+        Optional<RegistDoorLock> check = registDoorLockRepository.findById(dto.getRdlSeq());
+        if(check.isEmpty()
+                || !userSeq.equals(check.get().getUser().getUserSeq())
+                || check.get().getRdlApprove() == 0)
+            // 1-1. 1의 조회결과가 없거나, 사용자가 일치하지 않거나, 미승인된 데이터의 경우 return
+            return ApiResponse.FAILURE(404, "접근권한이 없습니다.");
+        RegistDoorLock registDoorLock = check.get();
+
+        // 2. nfc 활성화 로그 생성
+        ActivateNfcLog activateNfcLog = ActivateNfcLog.builder()
+                .useYn(0)
+                .user(registDoorLock.getUser())
+                .doorLock(registDoorLock.getDoorLock())
+                .build();
+
+        activateNfcLogRepository.save(activateNfcLog);
+
+        // 3. return
+        return ApiResponse.SUCCESS("NFC 태그 사용이 가능합니다.");
     }
 }
