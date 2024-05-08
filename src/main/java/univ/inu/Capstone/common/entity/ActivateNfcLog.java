@@ -48,4 +48,11 @@ public class ActivateNfcLog {
     public void PreUpdate(){
         this.modDate = LocalDateTime.now();
     }
+
+
+
+    // 사용여부 업데이트
+    public void updateUseYn(){
+        this.useYn = 1;
+    }
 }
