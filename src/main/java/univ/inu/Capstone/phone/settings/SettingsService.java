@@ -1,7 +1,9 @@
 package univ.inu.Capstone.phone.settings;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.entity.*;
 import univ.inu.Capstone.common.repository.*;
@@ -264,6 +266,7 @@ public class SettingsService {
         Optional<KeyBio> permitEntity = keyBioRepository.findById(dto.getKeyBioSeq());
         if (permitEntity.isEmpty())
             return ApiResponse.FAILURE(404, "삭제하려는 정보가 올바르지 않습니다.");
+        KeyBio entity = permitEntity.get();
 
         // 2. userSeq 와 1에서 구한 도어락 구분자로 요청자가 owner 권한인지 확인
         Optional<RegistDoorLock> userEntity = registDoorLockRepository.findByUser_UserSeqAndDoorLock_DoorLockSeq(userSeq, permitEntity.get().getDoorLock().getDoorLockSeq());
@@ -272,12 +275,22 @@ public class SettingsService {
             return ApiResponse.FAILURE(401, "삭제 요청자의 정보가 올바르지 않습니다.");
 
         // 3. owner 권한이 맞을 경우, 라즈베리와 통신해서 도어락기기에서 정보 삭제 요청
+//        requestDelFingerPrint(entity.getKeyBioData());
 
         // 4. DB 에서 카드 정보 삭제
-        KeyBio entity = permitEntity.get();
         keyBioRepository.delete(entity);
 
         return ApiResponse.SUCCESS("삭제되었습니다.");
+    }
+
+    private void requestDelFingerPrint(int keyBioData){
+        Map<String, Integer> params = new HashMap<>();
+        params.put("keyBioData", keyBioData);
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://127.0.0.1:5000/deleteFingerprint";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, params, String.class);
+        System.out.println(response.getBody());
     }
 
     /**

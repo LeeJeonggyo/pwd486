@@ -2,8 +2,10 @@ package univ.inu.Capstone.machine.openLock;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import univ.inu.Capstone.common.dto.apiResponse.ApiResponse;
 import univ.inu.Capstone.common.entity.*;
 import univ.inu.Capstone.common.repository.*;
@@ -13,7 +15,9 @@ import univ.inu.Capstone.machine.openLock.dto.OpenLockRequestDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -42,10 +46,10 @@ public class OpenLockService {
     public ApiResponse<?> openBySecretNo(OpenLockRequestDto.openBySecretNo dto) {
         // 1. serialNo를 사용해서 도어락 조회 (없으면 안됨.)
         DoorLock doorLock = findDoorLock(dto.getSerialNo());
-        if (doorLock == null) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
+        if (doorLock == null) return ApiResponse.ERROR(404, "This is an unregistered door lock.");
 
         // 2. 비밀번호 틀린 횟수 확인 (5번 부터 안됨.)
-        if (doorLock.getFailCntSecretNo() >= 5 ) return ApiResponse.FAILURE(401, "5회 이상 비밀번호를 잘못 입력하였습니다.");
+        if (doorLock.getFailCntSecretNo() >= 5 ) return ApiResponse.FAILURE(401, "password incorrectly more than 5 times.");
 
         // 3. secretNo와 비밀번호를 비교
         Optional<DoorLockSecret> doorLockSecretOpt = doorLockSecretRespository.findByDoorLock_DoorLockSeqAndDlSecretNo(doorLock.getDoorLockSeq(), dto.getSecretNo());
@@ -59,7 +63,7 @@ public class OpenLockService {
             // 4-1-3. 비밀번호 해제 로그 생성
             saveOpenLog(1, 1L, doorLock, "비밀번호", null);
             // 4-1-4. return
-            return ApiResponse.SUCCESS("인증되었습니다.");
+            return ApiResponse.SUCCESS("SUCCESS");
         } else { // 4-2. 해제 실패
             // 4-1-1. 틀린 횟수 +1
             doorLock.openSecretNo(0);
@@ -68,7 +72,7 @@ public class OpenLockService {
             // 4-1-3. 비밀번호 해제 실패 로그 생성
             saveOpenLog(0, 1L, doorLock, "???(비밀번호)", null);
             // 4-1-4. return
-            return ApiResponse.FAILURE(400, "비밀번호 입력이 잘못되었습니다.");
+            return ApiResponse.FAILURE(400, "The password input is incorrect");
         }
     }
 
@@ -81,7 +85,7 @@ public class OpenLockService {
     public ApiResponse<?> openByRfidAndNfc(OpenLockRequestDto.openByRfidAndNfc dto) {
         // 1. serialNo를 사용해서 도어락 조회 (없으면 안됨.)
         DoorLock doorLock = findDoorLock(dto.getSerialNo());
-        if (doorLock == null) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
+        if (doorLock == null) return ApiResponse.ERROR(404, "This is an unregistered door lock.");
 
         // 2. 키카드로 등록된 데이터인지 확인 (nfc의 UUID 값을 보안상의 이유로 획득할수 없으므로 카드키데이터 먼저 확인할 필요가 있다. )
         Optional<KeyCard> keyCardOpt = keyCardRepository
@@ -93,7 +97,7 @@ public class OpenLockService {
         // 4. failCntTag 값 확인 (5이상인지 확인 && (nfc 활성화 요청이 없음 || 키카드로 등록된 데이터가 있음) 문열림 불가)
         if (doorLock.getFailCntTag() >= 5
                 && (activateNfcLogOpt.isEmpty() || keyCardOpt.isPresent()))
-            return ApiResponse.FAILURE(401, "owner 권한 이외의 태깅이 5회 이상 잘못 되었습니다.");
+            return ApiResponse.FAILURE(401, "Tagging was incorrect more than 5 times.");
 
         // 5. 키카드 데이터가 존재하는 경우,
         if (keyCardOpt.isPresent()) {
@@ -105,7 +109,7 @@ public class OpenLockService {
             // 5-3. 비밀번호 해제 로그 생성
             saveOpenLog(1, 2L, doorLock, keyCardEntity.getKeyCardName(), null);
             // 5-4. return
-            return ApiResponse.SUCCESS("인증되었습니다.");
+            return ApiResponse.SUCCESS("SUCCESS");
         }
 
         // 6. 키카드 데이터가 존재하지 않고, nfc 활성화 요청이 있는 경우,
@@ -118,7 +122,7 @@ public class OpenLockService {
             // 6-2. failCntTag 값 확인 (5이상인지 확인 / 5이상일 경우, nfc owner 권한만 오픈 가능)
             if (doorLock.getFailCntTag() >= 5
                     && (nfcOpt.isEmpty() || nfcOpt.get().getRdlAuth() != 1))
-                return ApiResponse.FAILURE(401, "owner 권한 이외의 태깅이 5회 이상 잘못 되었습니다.");
+                return ApiResponse.FAILURE(401, "Tagging was incorrect more than 5 times.");
 
             // 6-3. nfc 로 등록된 사용자인 경우, 문 열림 알림 전송
             if (nfcOpt.isPresent()) {
@@ -140,7 +144,7 @@ public class OpenLockService {
                 activateNfcLog.updateUseYn();
 
                 // 6-3-5. return
-                return ApiResponse.SUCCESS("인증되었습니다.");
+                return ApiResponse.SUCCESS("SUCCESS");
             }
         }
 
@@ -152,7 +156,7 @@ public class OpenLockService {
         // 7-3. 비밀번호 해제 실패 로그 생성
         saveOpenLog(0, 2L, doorLock, "???(태그)", null);
         // 7-4. return
-        return ApiResponse.FAILURE(400, "태깅 오픈이 불가능합니다.");
+        return ApiResponse.FAILURE(400, "Tagging open is not possible.");
     }
 
     /**
@@ -163,7 +167,7 @@ public class OpenLockService {
     public ApiResponse<?> openByFingerPrint(OpenLockRequestDto.openByFingerPrint dto) {
         // 1. serialNo를 사용해서 도어락 조회 (없으면 안됨.)
         DoorLock doorLock = findDoorLock(dto.getSerialNo());
-        if (doorLock == null) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
+        if (doorLock == null) return ApiResponse.ERROR(404, "This is an unregistered door lock.");
 
         // 2. 비밀번호 해제 결과에 대한 핸드폰 알림 전송
         if (dto.getOpenYn() == 1) { // 2-1. 해제 성공
@@ -172,7 +176,7 @@ public class OpenLockService {
             if (keyBioOpt.isEmpty()) { // 이미 문은 열린 상태이므로 SUCCESS 상태로 알림 전송 및 로그 기록
                 sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", "알수 없는 지문이 사용되었습니다.");
                 saveOpenLog(1, 3L, doorLock, "???(지문)", null);
-                return ApiResponse.ERROR(401, "등록되지 않은 지문정보입니다.");
+                return ApiResponse.ERROR(401, "unregistered fingerprint");
             }
             // 2-1-2. 지문 해제 성공 알림 전송
             String keyBioName = keyBioOpt.get().getKeyBioName();
@@ -180,14 +184,14 @@ public class OpenLockService {
             // 2-1-3. 지문 해제 로그 생성
             saveOpenLog(1, 3L, doorLock, keyBioName, null);
             // 2-1-4. return
-            return ApiResponse.SUCCESS("로그등록이 완료되었습니다.");
+            return ApiResponse.SUCCESS("SUCCESS");
         } else { // 2-2. 해제 실패
             // 2-1-1. 지문 해제 실패 알림 전송
             sendNotification(doorLock.getDoorLockSeq(), "[FAIL] 문 열림 실패", "알수 없는 지문이 사용되었습니다.");
             // 2-1-2. 지문 해제 실패 로그 생성
             saveOpenLog(0, 3L, doorLock, "???(지문)", null);
             // 2-1-3. return
-            return ApiResponse.SUCCESS("로그등록이 완료되었습니다.");
+            return ApiResponse.SUCCESS("SUCCESS");
         }
     }
 
@@ -199,26 +203,27 @@ public class OpenLockService {
     public ApiResponse<?> openByTagless(OpenLockRequestDto.openByTagless dto) {
         // 1. btSerialNo을 사용해서 도어락 조회 (없으면 안됨.)
         Optional<DoorLock> doorLockOpt = doorLockRepository.findByBtSerialNo(dto.getBtSerialNo());
-        if (doorLockOpt.isEmpty()) return ApiResponse.ERROR(404, "등록되지 않은 도어락입니다.");
+        if (doorLockOpt.isEmpty()) return ApiResponse.ERROR(404, "This is an unregistered door lock.");
         DoorLock doorLock = doorLockOpt.get();
 
         // 2. 태그리스 가능 시간 확인
         boolean taglessTimeValidation = taglessTimeValidation(doorLock.getDoorLockSeq());
         if (!taglessTimeValidation)
-            return ApiResponse.FAILURE(404, "태그리스 시간이 아닙니다.");
+            return ApiResponse.FAILURE(404, "This is not tagless time.");
 
         // 3. kakaoId를 사용해서 사용자 조회(if: JWT 토큰 확인으로 Authentication 으로 확인 할 수 있다면 그렇게 변경할 것.)
         Optional<User> userOpt = userRepository.findByKakaoId(dto.getKakaoId());
-        if (userOpt.isEmpty()) return ApiResponse.ERROR(404, "등록되지 않은 사용자입니다.");
+        if (userOpt.isEmpty()) return ApiResponse.ERROR(404, "an unregistered user");
 
         // 4. owner 권한 확인
         User user = userOpt.get();
         Optional<RegistDoorLock> registDoorLockOpt
                 = registDoorLockRepository.findByRdlAuthAndDoorLock_DoorLockSeqAndUser_UserSeq(1, doorLock.getDoorLockSeq(), user.getUserSeq());
-        if (registDoorLockOpt.isEmpty()) return ApiResponse.ERROR(401, "태그리스 접근 권한이 없습니다.");
+        if (registDoorLockOpt.isEmpty()) return ApiResponse.ERROR(401, "do not have tagless access");
         String rdlName = registDoorLockOpt.get().getRdlName();
 
         // 5. 도어락으로 open 신호 보내기
+//        requestOpenDoor();
 
         // 6. 알림전송
         sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", rdlName+"님께서 태그리스 기능을 사용하셨습니다.");
@@ -227,7 +232,7 @@ public class OpenLockService {
         saveOpenLog(1, 4L, doorLock, rdlName+"(태그리스)", user);
 
         // 8. return
-        return ApiResponse.SUCCESS("인증되었습니다.");
+        return ApiResponse.SUCCESS("SUCCESS");
     }
 
 
@@ -354,5 +359,16 @@ public class OpenLockService {
             default:
                 return null;
         }
+    }
+
+
+    // 도어락으로 open 신호 보내기
+    private void requestOpenDoor(){
+        Map<String, String> params = new HashMap<>();
+        params.put("command", "open");
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://127.0.0.1:5000/openDoor";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, params, String.class);
+        System.out.println(response.getBody());
     }
 }
