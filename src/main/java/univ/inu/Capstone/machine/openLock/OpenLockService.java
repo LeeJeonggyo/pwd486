@@ -212,7 +212,7 @@ public class OpenLockService {
             return ApiResponse.FAILURE(404, "This is not tagless time.");
 
         // 3. kakaoId를 사용해서 사용자 조회(if: JWT 토큰 확인으로 Authentication 으로 확인 할 수 있다면 그렇게 변경할 것.)
-        Optional<User> userOpt = userRepository.findByKakaoId(dto.getKakaoId());
+        Optional<User> userOpt = userRepository.findByFcmToken(dto.getFcmToken());
         if (userOpt.isEmpty()) return ApiResponse.ERROR(404, "an unregistered user");
 
         // 4. owner 권한 확인
