@@ -4,7 +4,6 @@
 
 ## 💻 프로젝트 소개
 
----
 
 <h3>주제 <br><br>🔑 SHD:Smart Hidden Door-lock using biometric authentication and IoT technology</h3><br>
 
