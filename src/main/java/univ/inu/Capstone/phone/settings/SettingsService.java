@@ -275,7 +275,7 @@ public class SettingsService {
             return ApiResponse.FAILURE(401, "삭제 요청자의 정보가 올바르지 않습니다.");
 
         // 3. owner 권한이 맞을 경우, 라즈베리와 통신해서 도어락기기에서 정보 삭제 요청
-//        requestDelFingerPrint(entity.getKeyBioData());
+        requestDelFingerPrint(entity.getKeyBioData());
 
         // 4. DB 에서 카드 정보 삭제
         keyBioRepository.delete(entity);
@@ -288,7 +288,8 @@ public class SettingsService {
         params.put("keyBioData", keyBioData);
 
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://127.0.0.1:5000/deleteFingerprint";
+//        String url = "http://192.168.35.219:5000/deleteFingerprint";
+        String url = "http://192.168.109.128:5000/deleteFingerprint";
         ResponseEntity<String> response = restTemplate.postForEntity(url, params, String.class);
         System.out.println(response.getBody());
     }

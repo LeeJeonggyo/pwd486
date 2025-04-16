@@ -222,16 +222,20 @@ public class OpenLockService {
         if (registDoorLockOpt.isEmpty()) return ApiResponse.ERROR(401, "do not have tagless access");
         String rdlName = registDoorLockOpt.get().getRdlName();
 
-        // 5. 도어락으로 open 신호 보내기
-//        requestOpenDoor();
+        // 5. 1분내에 태그리스로 오픈한 데이터가 있는지 확인
+        Optional<OpenLog> recentLog = openLogRepository.findRecentTaglessLog(doorLock.getDoorLockSeq());
+        if (recentLog.isPresent()) return ApiResponse.FAILURE(406, "Please try again in 1 minute.");
 
-        // 6. 알림전송
+        // 6. 도어락으로 open 신호 보내기
+        requestOpenDoor();
+
+        // 7. 알림전송
         sendNotification(doorLock.getDoorLockSeq(), "[SUCCESS] 문 열림", rdlName+"님께서 태그리스 기능을 사용하셨습니다.");
 
-        // 7. 로그기록
+        // 8. 로그기록
         saveOpenLog(1, 4L, doorLock, rdlName+"(태그리스)", user);
 
-        // 8. return
+        // 9. return
         return ApiResponse.SUCCESS("SUCCESS");
     }
 
@@ -367,7 +371,8 @@ public class OpenLockService {
         Map<String, String> params = new HashMap<>();
         params.put("command", "open");
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://127.0.0.1:5000/openDoor";
+//        String url = "http://192.168.35.219:5000/openDoor";
+        String url = "http://192.168.109.128:5000/openDoor";
         ResponseEntity<String> response = restTemplate.postForEntity(url, params, String.class);
         System.out.println(response.getBody());
     }
