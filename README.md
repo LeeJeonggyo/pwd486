@@ -87,7 +87,7 @@
 
 도어락 기기
 ---
-### &emsp;[ 🚪 도어락 해제 유효성 검증 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/machine/openLock) ] ###
+### &emsp;| 🚪 도어락 해제 유효성 검증 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/machine/openLock) ###
 &emsp;&emsp;• 기기 or 모바일 어플 로부터 도어락 해제 시도 데이터를 전달받음.
 <br>&emsp;&emsp;• 기기 & 해제키 유효성 검사
 <br>&emsp;&emsp;• 해제 시도에 대한 가능(해제) & 불가능(해제 실패) 로그 기록
@@ -100,7 +100,7 @@
 <br>&emsp;&emsp;&emsp;&emsp;**▸ 지문 해제** : openByFingerPrint()
 <br>&emsp;&emsp;&emsp;&emsp;**▸ 태그리스 해제** : openByTagless()
 
-### &emsp;[ 🔑 해제키 등록 & 변경 & 삭제  - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/94d85494eaa297672e6a6d576612e7abeb30f50e/src/main/java/univ/inu/Capstone/machine/saveKey) ] ###
+### &emsp;| 🔑 해제키 등록 & 변경 & 삭제  - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/94d85494eaa297672e6a6d576612e7abeb30f50e/src/main/java/univ/inu/Capstone/machine/saveKey) ###
 &emsp;&emsp;• 기기 or 모바일 어플 로부터 도어락과 해제키 데이터를 전달받음.
 <br>&emsp;&emsp;• 기기 & 해제키 유효성 검사
 <br>&emsp;&emsp;• 기존 등록이 없는 경우, 등록 or 변경 or 삭제
