@@ -1,10 +1,11 @@
 
 
-# 🛠 Capstone Design 프로젝트 - 졸업작품 - 백엔드<br>
+# 🛠 Capstone Design 프로젝트 - 졸업작품 - 백엔드
+
+<br><br>
 
 ## 💻 프로젝트 소개
 
----
 
 <h3>주제 <br><br>🔑 SHD:Smart Hidden Door-lock using biometric authentication and IoT technology</h3><br>
 
@@ -28,7 +29,6 @@
 
 ## ⏳ 개발 기간
 
----
 <h3>백엔드 - 24.03.01 - 24.05.24 (85일) - 담당자:이정교</h3>
 <details>
 <summary>전체 일정 상세</summary>
@@ -67,7 +67,6 @@
 
 ## 📌 주요 기능
 
----
 ### 📁 폴더 구조
 
 📦 root <br>
