@@ -85,93 +85,112 @@
 
 
 ### ✨ 구현 기능
-### 📡 machine (기기) - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/machine) ###
-### └─ 🔐 openLock (기기) - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/machine/openLock) ###
-#### &emsp;&emsp;[ 도어락 해제 유효성 검증 ] ####
+
+도어락 기기
+---
+### &emsp;[ 🚪 도어락 해제 유효성 검증 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/machine/openLock) ] ###
 &emsp;&emsp;• 기기 or 모바일 어플 로부터 도어락 해제 시도 데이터를 전달받음.
 <br>&emsp;&emsp;• 기기 & 해제키 유효성 검사
 <br>&emsp;&emsp;• 해제 시도에 대한 가능(해제) & 불가능(해제 실패) 로그 기록
 <br>&emsp;&emsp;• 해제 가능 시, 도어락 기기로 도어락 해제 신호(flask Rest API) 전송
 <br>&emsp;&emsp;• 해제 가능 시, 모바일 어플로 해제 알림(firebase) 전송
 
-### &emsp;&emsp;└─ 기능 ###
-&emsp;&emsp;&emsp;&emsp;**• 비밀번호 해제** : openBySecretNo()
-<br>&emsp;&emsp;&emsp;&emsp;**• RFID & NFC 해제** : openByRfidAndNfc()
-<br>&emsp;&emsp;&emsp;&emsp;**• 지문 해제** : openByFingerPrint()
-<br>&emsp;&emsp;&emsp;&emsp;**• 태그리스 해제** : openByTagless()
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**▸ 비밀번호 해제** : openBySecretNo()
+<br>&emsp;&emsp;&emsp;&emsp;**▸ RFID & NFC 해제** : openByRfidAndNfc()
+<br>&emsp;&emsp;&emsp;&emsp;**▸ 지문 해제** : openByFingerPrint()
+<br>&emsp;&emsp;&emsp;&emsp;**▸ 태그리스 해제** : openByTagless()
 
-### └─ 🔑 saveKey (기기) - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/94d85494eaa297672e6a6d576612e7abeb30f50e/src/main/java/univ/inu/Capstone/machine/saveKey) ###
-#### &emsp;&emsp;[ 해제키 등록 & 변경 & 삭제 ] ####
+### &emsp;[ 🔑 해제키 등록 & 변경 & 삭제  - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/94d85494eaa297672e6a6d576612e7abeb30f50e/src/main/java/univ/inu/Capstone/machine/saveKey) ] ###
 &emsp;&emsp;• 기기 or 모바일 어플 로부터 도어락과 해제키 데이터를 전달받음.
 <br>&emsp;&emsp;• 기기 & 해제키 유효성 검사
 <br>&emsp;&emsp;• 기존 등록이 없는 경우, 등록 or 변경 or 삭제
 
-### &emsp;&emsp;└─ 기능 ###
-&emsp;&emsp;&emsp;&emsp;**• 카드키 등록** : saveKeyCard()
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• 카드키 등록** : saveKeyCard()
 <br>&emsp;&emsp;&emsp;&emsp;**• 지문 등록** : saveKeyBio()
 <br>&emsp;&emsp;&emsp;&emsp;**• 비밀번호 변경** : changePwd()
 <br>&emsp;&emsp;&emsp;&emsp;**• 카드키 삭제** : delKeyCard()
 <br>&emsp;&emsp;&emsp;&emsp;**• 지문 정보 삭제** : delKeyBio()
 
-### **📱 phone (어플)** - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/phone) ###
-### └─ login (기기) - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/b75ccf3944e3ed2d1b6823a61179df86c42357fa/src/main/java/univ/inu/Capstone/phone/login) ###
-#### &emsp;&emsp;[ 도어락 관리 어플 로그인 ] ####
+도어락 관리 어플
+---
+### &emsp;| 📌 로그인 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/b75ccf3944e3ed2d1b6823a61179df86c42357fa/src/main/java/univ/inu/Capstone/phone/login) ###
 &emsp;&emsp;• 어플로부터 카카오 로그인시 발급되는 아이디 및 로그인 필요 정보 전달
 <br>&emsp;&emsp;• JWT 토큰으로 로그인 상태를 관리한다.
 
-### &emsp;&emsp;└─ 기능 ###
-&emsp;&emsp;&emsp;&emsp;**• 카카오 로그인 (최초)** : firstLogin()
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• 카카오 로그인 (최초)** : firstLogin()
 <br>&emsp;&emsp;&emsp;&emsp;**• 지문 로그인** : accessLogin()
 <br>&emsp;&emsp;&emsp;&emsp;**• accessToken 재발급** : refreshLogin()
 
-### └─ main (기기) - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/7a37810209c505f25f7efbd2f2e9fdc72ad3695d/src/main/java/univ/inu/Capstone/phone/main) ###
-#### &emsp;&emsp;[ 도어락 관리 어플 메인 페이지 필요 기능 모음 ] ####
+### &emsp;| 📌 메인 페이지 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/7a37810209c505f25f7efbd2f2e9fdc72ad3695d/src/main/java/univ/inu/Capstone/phone/main) ###
 
-### &emsp;&emsp;└─ 기능 ###
-&emsp;&emsp;&emsp;&emsp;**• 사용자별 등록된 nfc 데이터 리스트 출력** : getMyNfcList()
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• 사용자별 등록된 nfc 데이터 리스트 출력** : getMyNfcList()
 <br>&emsp;&emsp;&emsp;&emsp;**• owner 권한 이외, 등록된 NFC 삭제 API** : delNfcOther()
 <br>&emsp;&emsp;&emsp;&emsp;**• nfc 활성화 로그 실행** : activateNfc()
 
-### └─ registDoorLock (기기) - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/8be42bdbc799b7fa1672103a7f63c74303137963/src/main/java/univ/inu/Capstone/phone/registDoorLock) ###
-#### &emsp;&emsp;[ 도어락 관리 어플 - 도어락 기기 등록 및 NFC 등록 페이지 기능 모음 ] ####
-### &emsp;&emsp;└─ 기능 ###
-#### &emsp;&emsp;&emsp;&emsp;&nbsp;[ 도어락 기기 등록 ] ####
+
+### &emsp;| 📌 도어락 기기 등록 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/8be42bdbc799b7fa1672103a7f63c74303137963/src/main/java/univ/inu/Capstone/phone/registDoorLock) ###
+
+**&emsp;&emsp;구현**
+<br>
 &emsp;&emsp;&emsp;&emsp;**• 도어락 기기 정보 등록** : registMachine()
 <br>&emsp;&emsp;&emsp;&emsp;**• 시리얼 넘버를 통한 도어락 검색** : searchSerialNo()
-<br><br>
-#### &emsp;&emsp;&emsp;&emsp;&nbsp;[ NFC 등록 - owner:도어락 주인 ] ####
-&emsp;&emsp;&emsp;&emsp;**• 사용자 도어락 NFC 등록 (owner:도어락 주인)** : registNfc()
-<br><br>
+
+### &emsp;| 📌 NFC 등록 - owner:도어락 주인 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/8be42bdbc799b7fa1672103a7f63c74303137963/src/main/java/univ/inu/Capstone/phone/registDoorLock) ###
+
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• 사용자 도어락 NFC 등록 (owner:도어락 주인)** : registNfc()
+
 #### &emsp;&emsp;&emsp;&emsp;&nbsp;[ 설정 화면 - 초대코드 생성 ] ####
+
+### &emsp;| 📌 설정 화면 - 초대코드 생성 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/8be42bdbc799b7fa1672103a7f63c74303137963/src/main/java/univ/inu/Capstone/phone/registDoorLock) ###
+
+**&emsp;&emsp;구현**
+<br>
 &emsp;&emsp;&emsp;&emsp;**• member, guest 초대 코드 생성** : inviteCode()
-<br><br>
-#### &emsp;&emsp;&emsp;&emsp;&nbsp;[ NFC 등록 - member, guest 권한으로 도어락 해제키(NFC) 사용자 초대 및 등록 ] ####
+
+### &emsp;| 📌 NFC 등록 - member, guest 권한 해제키(NFC) - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/8be42bdbc799b7fa1672103a7f63c74303137963/src/main/java/univ/inu/Capstone/phone/registDoorLock) ###
+
+**&emsp;&emsp;구현**
 <br>&emsp;&emsp;&emsp;&emsp;**• 초대 코드 조회** : searchInviteCode()
 <br>&emsp;&emsp;&emsp;&emsp;**• owner 권한 이외, NFC 등록 API** : registNfcOther()
 
-### └─ settings (기기) - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/phone/settings) ###
-#### &emsp;&emsp;[ 도어락 관리 어플 - 설정 페이지 기능 모음 ] ####
-### &emsp;&emsp;└─ 기능 ###
-#### &emsp;&emsp;&emsp;&emsp;&nbsp;[ 도어락 비밀번호 설정 화면 ] ####
-&emsp;&emsp;&emsp;&emsp;**• 마지막 출입시간 기록 조회** : lastLog()
+
+
+### &emsp;| 📌 도어락 비밀번호 설정 화면 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/phone/settings) ###
+
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• 마지막 출입시간 기록 조회** : lastLog()
 <br>&emsp;&emsp;&emsp;&emsp;**• 도어락 비밀번호 변경** : changePw()
-<br><br>
-#### &emsp;&emsp;&emsp;&emsp;&nbsp;[ 출입기록 보기 화면 ] ####
-&emsp;&emsp;&emsp;&emsp;**• 출입로그 조회** : viewLog()
-<br><br>
-#### &emsp;&emsp;&emsp;&emsp;&nbsp;[ 멤버관리 화면 ] ####
-&emsp;&emsp;&emsp;&emsp;**• 등록된 nfc, 지문, 카드키 전체 조회** : viewRegistKey()
+
+### &emsp;| 📌 도어락 관리 어플 - 출입기록 보기 화면 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/phone/settings) ###
+
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• 출입로그 조회** : viewLog()
+### &emsp;| 📌 도어락 관리 어플 - 멤버관리 화면 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/phone/settings) ###
+
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• 등록된 nfc, 지문, 카드키 전체 조회** : viewRegistKey()
 <br>&emsp;&emsp;&emsp;&emsp;**• 승인된 nfc 해제키 리스트 조회** : viewApproveNfcList()
 <br>&emsp;&emsp;&emsp;&emsp;**• member & guest 사용허가** : usePermit()
 <br>&emsp;&emsp;&emsp;&emsp;**• member & guest 삭제** : delNfcOther()
 <br>&emsp;&emsp;&emsp;&emsp;**• 카드키 삭제** : delKeyCard()
 <br>&emsp;&emsp;&emsp;&emsp;**• 지문 삭제** : delKeyBio()
 <br>&emsp;&emsp;&emsp;&emsp;**• owner 권한 양도** : tossOwnerAuth()
-<br><br>
-#### &emsp;&emsp;&emsp;&emsp;&nbsp;[ AI 설정 (태그리스 설정) 화면 ] ####
-&emsp;&emsp;&emsp;&emsp;**• 데이터 수집, AI 서비스 동의 여부 조회 로직** : selectPrivateYn()
+
+
+### &emsp;| 📌 도어락 관리 어플 - AI 설정 (태그리스 설정) 화면 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/phone/settings) ###
+
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• 데이터 수집, AI 서비스 동의 여부 조회 로직** : selectPrivateYn()
 <br>&emsp;&emsp;&emsp;&emsp;**• 토글-데이터 수집여부 update** : dataToggle()
 <br>&emsp;&emsp;&emsp;&emsp;**• 토글-AI 서비스 동의 여부 update** : aiServiceToggle()
 <br><br>
-#### &emsp;&emsp;&emsp;&emsp;&nbsp;[ 카드키 제거 화면 ] ####
-&emsp;&emsp;&emsp;&emsp;**• owner의 양도 없는 삭제** : deleteOwner()
+
+### &emsp;| 📌 도어락 관리 어플 - 카드키 제거 화면 - [폴더](https://github.com/LeeJeonggyo/pwd486/blob/9d870d23c876a2cfa00cbf9a3de8e0ae96396b03/src/main/java/univ/inu/Capstone/phone/settings) ###
+
+**&emsp;&emsp;구현**
+<br>&emsp;&emsp;&emsp;&emsp;**• owner의 양도 없는 삭제** : deleteOwner()
